@@ -4,11 +4,12 @@
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/39039688/1754475412900-08c2efbf-fa8b-49ce-8cca-d4ec00172c50.png)
 
-# 训练阶段：轨迹数据收集与合成
+# 1. 训练阶段：轨迹数据收集与合成
 
-## Trajectory Collection（PC Tracker） 
+## 1.1. Trajectory Collection（PC Tracker） 
 
 ✅支持 Windows 操作系统
+
 
 官方仓库：[https://github.com/GAIR-NLP/PC-Agent](https://github.com/GAIR-NLP/PC-Agent)
 
@@ -23,7 +24,7 @@ PC Tracker 采集人类与 PC 的交互轨迹。
 
 借助PC Tracker，获取了 312 条人类轨迹数据。
 
-## Thought Completion
+## 1.2. Thought Completion
 
 上一步中我们得到了人类的操作轨迹，在这一步我们将把原始的人类轨迹数据转化为有思考的轨迹（trajectory with thoughts）。
 
@@ -31,7 +32,7 @@ PC Agent-E 为 Claude 3.7 Sonnet 提供：任务描述，历史动作（with con
 
 <details class="lake-collapse"><summary id="u82a5d5c3"><span class="ne-text" style="font-size: 16px">【翻译】论文附录 B.1 部分 Thought Completion Prompt</span></summary><h3 id="LXWHF"><span class="ne-text">表格4：思维补全提示</span></h3><h4 id="MSbXi"><span class="ne-text">思维补全提示</span></h4><p id="ucfcc1228" class="ne-p"><span class="ne-text" style="font-size: 16px">你是一个用于在计算机上完成任务的有帮助的算机使用智能体。你的目标是重现你在执行特定操作背后的思维过程。</span></p><p id="u005130d6" class="ne-p"><span class="ne-text" style="font-size: 16px">你将获得以下信息：</span></p><ol class="ne-ol"><li id="u8865b617" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你试图完成的任务。</span></li><li id="u3789e20c" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你已执行步骤的历史记录（如有，最多 50 条；如果是第一个操作，则无）。</span></li><li id="u943d11b8" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你选择执行的特定操作。</span></li><li id="u044d3b0a" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你点击的元素名称（如果你点击了某个元素）。如果名称过于笼统模糊，你需要根据截图判断点击什么。</span></li><li id="ufe1eaeef" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你决定执行操作时计算机屏幕的截图。</span></li><li id="uebf8dc31" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">截图上的红色标记指示点击或拖动操作的位置。</span></li></ol><p id="ubbafcff5" class="ne-p"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">要梳理你的思维过程，请考虑：</span></p><ol class="ne-ol"><li id="u51b92fcf" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">你在屏幕上观察到了什么？分析当前截图时，要结合你的任务和之前的操作。</span></li><li id="u68ad207c" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">（如适用）评估你之前的操作：</span></li></ol><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="u83d6fb77" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">它是否达到了预期效果？如果没有，找出可能的原因（例如，误点击、元素未激活）。<br /></span><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px"> 无效操作的一些典型示例：</span></li><li id="u75ae0679" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">在空白处误点击</span></li><li id="u9aa8bcfc" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">点击一些无效元素（未双击）</span></li><li id="ud1bf86c8" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">因输入框未激活而无效的打字/按键操作</span></li><li id="ud5984d58" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">结果是否与你之前的计划一致，还是发生了意外情况？<br /></span><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px"> 无效操作的一些典型示例：</span></li><li id="u2878f1ba" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">误点击错误元素</span></li><li id="ucef94c93" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">忘记清除输入栏中已有的文本</span></li></ul></ul><ol start="3" class="ne-ol"><li id="ud598328b" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">根据你的操作历史，评估你在完成整体任务方面的进度。</span></li><li id="u1531327f" data-lake-index-type="0"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">考虑是否因为之前步骤中的尝试失败，你正在摸索如何完成任务。</span></li></ol><p id="u87c91f95" class="ne-p"><span class="ne-text" style="background-color: #FBE4E7; font-size: 16px">将你的思维过程以清晰、自然的第一人称叙述呈现，解释你当时的推理。</span></p><p id="ud9032634" class="ne-p"><span class="ne-text" style="font-size: 16px">重要要求：</span></p><ol class="ne-ol"><li id="uf1e28182" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">切勿</span></strong><span class="ne-text" style="font-size: 16px">在回复中提及红色标记。这些标记是</span><strong><span class="ne-text" style="font-size: 16px">事后</span></strong><span class="ne-text" style="font-size: 16px">添加的，用于指示你的点击或拖动操作的位置，在你做决定时，它们并不在屏幕上。</span><strong><span class="ne-text" style="font-size: 16px">切勿</span></strong><span class="ne-text" style="font-size: 16px">在回复中提及 “红框”“红圈”“红箭头” 等表述。</span></li><li id="ue51028ba" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">写作时，要仿佛你在执行操作前实时思考一样。不要包含操作后的评估或事后的感悟。</span></li></ol><p id="u6db3b634" class="ne-p"><span class="ne-text" style="font-size: 16px">你试图完成的任务：{task_description} <br /></span><span class="ne-text" style="font-size: 16px">你的操作历史：{history_str} <br /></span><span class="ne-text" style="font-size: 16px">你选择执行的特定操作：{action}</span></p></details>
 
-## Trajectory Boost
+## 1.3. Trajectory Boost
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/39039688/1754485277774-17d66777-23a5-40bf-9dd1-4ed6e9ef80dc.png)
 
@@ -43,7 +44,7 @@ PC Agent-E 为 Claude 3.7 Sonnet 提供：现有的任务轨迹、屏幕截图�
 
 <details class="lake-collapse"><summary id="u85b7ade4"><span class="ne-text" style="font-size: 16px">【翻译】论文附录 B.2 部分 Trajectory Boost Prompt</span></summary><h3 id="uZ0vQ"><span class="ne-text">表格5：轨迹增强提示</span></h3><h4 id="w6Q22"><span class="ne-text">轨迹增强提示</span></h4><p id="ufd3ac01e" class="ne-p"><span class="ne-text" style="font-size: 16px">你是一个 有帮助的助手，可协助用户完成计算机任务，且</span><strong><span class="ne-text" style="font-size: 16px">完全有权限</span></strong><span class="ne-text" style="font-size: 16px">对用户的计算机进行任何操作。操作系统为 Windows 。</span><span class="ne-text" style="background-color: #D9EAFC; font-size: 16px">基于所提供的当前状态，你需要提出完成任务的下一步操作。</span><span class="ne-text" style="font-size: 16px">不要试图一步完成整个任务，要将其拆分为更小的步骤，每一步操作后会得到新状态，以便继续交互。</span></p><p id="uc5304a26" class="ne-p"><strong><span class="ne-text" style="font-size: 16px">重要规则</span></strong><span class="ne-text" style="font-size: 16px">：你必须严格遵守以下规则：</span></p><ol class="ne-ol"><li id="uedef705c" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">每次回复仅从以下列表中选择</span><strong><span class="ne-text" style="font-size: 16px">一个</span></strong><span class="ne-text" style="font-size: 16px">操作，每一步不要执行多个操作。 </span></li><li id="u89a548cf" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">严格遵循所选操作的语法格式，不要创建或使用列表外的任何操作。 </span></li><li id="u1e26c57a" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">任务完成后，输出 “action finish” 。</span></li></ol><h3 id="wr47e"><span class="ne-text">有效操作</span></h3><ol class="ne-ol"><li id="u13ff492e" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">click (x, y)</span></strong><span class="ne-text" style="font-size: 16px">：点击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="ue95e9b7b" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">right click (x, y)</span></strong><span class="ne-text" style="font-size: 16px">：右键点击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="u5d7dc6b4" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">double click (x, y)</span></strong><span class="ne-text" style="font-size: 16px">：双击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="ue1a88210" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">drag from (x1, y1) to (x2, y2)</span></strong><span class="ne-text" style="font-size: 16px">：将元素从位置 (x1, y1) 拖动到 (x2, y2) </span></li><li id="u90841079" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">scroll (x)</span></strong><span class="ne-text" style="font-size: 16px">：垂直滚动屏幕，偏移像素为 x 。x 为正值时向上滚动，为负值时向下滚动 </span></li><li id="ufa981b69" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">press key: key_content</span></strong><span class="ne-text" style="font-size: 16px">：按下键盘上 key_content 对应的按键 </span></li><li id="u9c556b64" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">hotkey (key1, key2)</span></strong><span class="ne-text" style="font-size: 16px">：按下由 key1 和 key2 组成的快捷键 </span></li><li id="ue594ee4e" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">hotkey (key1, key2, key3)</span></strong><span class="ne-text" style="font-size: 16px">：按下由 key1、key2 和 key3 组成的快捷键 </span></li><li id="u8acf0c55" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">type text: text_content</span></strong><span class="ne-text" style="font-size: 16px">：在键盘输入 text_content 内容。注意，输入文字前，需确保文本框或输入字段已激活 / 获得焦点。若文本框未激活，应先点击激活它，然后在单独步骤中使用 “type text” 操作 </span></li><li id="u72d51931" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">wait</span></strong><span class="ne-text" style="font-size: 16px">：等待一段时间，通常用于等待系统响应、屏幕刷新、广告结束 </span></li><li id="u97399e5b" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">finish</span></strong><span class="ne-text" style="font-size: 16px">：表明任务已完成 </span></li><li id="u00eb7a0b" data-lake-index-type="0"><strong><span class="ne-text" style="font-size: 16px">fail</span></strong><span class="ne-text" style="font-size: 16px">：表明任务失败，即因提供信息不足，任务无法执行</span></li></ol><p id="u8bbc14e4" class="ne-p"><span class="ne-text" style="font-size: 16px">在决定下一步操作前，需仔细考量屏幕当前状态和操作历史。思维过程应涵盖以下要点：</span></p><ol class="ne-ol"><li id="u03abf1eb" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">你在屏幕上观察到了什么？分析当前截图时，结合任务和之前的操作。 </span></li><li id="u43ee4610" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">（如适用）之前的计划和操作是怎样的？分三种情况评估之前的操作：</span></li></ol><ol class="ne-list-wrap"><ol ne-level="1" class="ne-ol"><li id="u69e45906" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">操作无任何效果。应找出可能原因（如误点击、元素未激活），并在本步骤调整计划。 <br /></span><span class="ne-text" style="font-size: 16px"> 无效操作的典型示例：</span></li></ol></ol><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="ue5461e06" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">在空白处误点击 </span></li><li id="u201d53b7" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">未双击打开部分元素，操作无效 </span></li><li id="u2e0476e6" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">因输入框未激活，打字 / 按键操作无效</span></li></ul></ul><ol class="ne-list-wrap"><ol start="2" ne-level="1" class="ne-ol"><li id="u14fed9f0" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">操作有效果，但结果与之前计划不一致。应找出可能原因（如误点击、元素未激活），并在本步骤纠正。 <br /></span><span class="ne-text" style="font-size: 16px"> 无效操作的典型示例：</span></li></ol></ol><ul class="ne-list-wrap"><ul ne-level="1" class="ne-ul"><li id="u57a3ff9b" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">误点击错误元素 </span></li><li id="ua9bbc4c2" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">忘记清除输入栏中已有的文本</span></li></ul></ul><ol class="ne-list-wrap"><ol start="2" ne-level="1" class="ne-ol"><li id="u189bae3e" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">操作有效果，且与之前计划一致。应基于当前状态推进到下一步。</span></li></ol></ol><ol start="3" class="ne-ol"><li id="u8981af18" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">根据操作历史，评估完成整体任务的进度。 </span></li><li id="ud4cc1e86" data-lake-index-type="0"><span class="ne-text" style="font-size: 16px">若之前步骤中有失败尝试，探索完成任务的新方法。</span><strong><span class="ne-text" style="font-size: 16px">切勿重复</span></strong><span class="ne-text" style="font-size: 16px">历史操作。</span></li></ol><h3 id="qi1jq"><span class="ne-text">回复格式</span></h3><p id="u5b4a6d66" class="ne-p"><span class="ne-text" style="font-size: 16px">Your thought process（你的思维过程）</span></p><p id="u7b9ccc33" class="ne-p"><span class="ne-text" style="font-size: 16px">Action: The specific action you choose to take.（操作：你选择执行的具体操作） </span></p><p id="u64f45e78" class="ne-p"><span class="ne-text" style="font-size: 16px">你试图完成的任务：</span><span class="ne-text" style="color: #DF2A3F; font-size: 16px">{task_description} </span><span class="ne-text" style="font-size: 16px"><br /></span><span class="ne-text" style="font-size: 16px">你的操作历史：</span><span class="ne-text" style="color: #DF2A3F; font-size: 16px">{history_str} </span><span class="ne-text" style="font-size: 16px"><br /></span><span class="ne-text" style="font-size: 16px">现有如下</span><span class="ne-text" style="color: #DF2A3F; font-size: 16px">截图</span><span class="ne-text" style="font-size: 16px">。为协助完成任务，你接下来会执行哪一步操作？</span></p></details>
 
-## Agent Training
+## 1.4. Agent Training
 
 PC Agent-E 为 Claude 3.7 Sonnet 提供：任务描述，历史和截图，并结合对应 prompt（见论文附录 B.3 部分）。输出为 <thought, action>。
 
@@ -59,14 +60,14 @@ PC Agent-E 为 Claude 3.7 Sonnet 提供：任务描述，历史和截图，并�
 <details class="lake-collapse"><summary id="u3ab48f59"><span class="ne-text" style="font-size: 16px">【翻译】论文附录 B.3 部分 </span><span class="ne-text" style="color: rgb(0,0,0); font-size: 16px">PC Agent-E scaffold Promp</span></summary><h3 id="Dl6v2"><span class="ne-text">表格6：PC Agent - E 脚手架提示</span></h3><h4 id="XrZAX"><span class="ne-text">PC Agent - E 脚手架提示</span></h4><p id="u3c4b7df3" class="ne-p"><span class="ne-text">你是一个有帮助的助手，能够协助用户完成计算机任务，且</span><strong><span class="ne-text">完全有权限</span></strong><span class="ne-text">对用户的计算机进行任何操作。基于所提供的当前状态，</span><span class="ne-text" style="background-color: #FBF5CB">你需要提出完成任务的下一步操作</span><span class="ne-text">。不要试图一步完成整个任务，要把它拆分成更小的步骤，每一步操作后你会获得一个新状态以继续交互。</span></p><p id="u079741c8" class="ne-p"><strong><span class="ne-text">重要提示</span></strong><span class="ne-text">：你必须严格遵守以下规则：</span></p><ol class="ne-ol"><li id="u9aa511e3" data-lake-index-type="0"><span class="ne-text">每次回复仅从以下列表中选择</span><strong><span class="ne-text">一个</span></strong><span class="ne-text">操作，每一步不要执行多个操作。</span></li><li id="u572af8ff" data-lake-index-type="0"><span class="ne-text">严格遵循所选操作的语法格式，不要创建或使用列表之外的任何操作。</span></li><li id="u807b2e52" data-lake-index-type="0"><span class="ne-text">一旦任务完成，输出 “finish” 。</span></li></ol><h3 id="n5ilL"><span class="ne-text">有效操作</span></h3><ol class="ne-ol"><li id="ub25e3442" data-lake-index-type="0"><strong><span class="ne-text">click (x, y)</span></strong><span class="ne-text">：点击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="u6a8f54ed" data-lake-index-type="0"><strong><span class="ne-text">right click (x, y)</span></strong><span class="ne-text">：右键点击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="udd435aa3" data-lake-index-type="0"><strong><span class="ne-text">double click (x, y)</span></strong><span class="ne-text">：双击屏幕上坐标为 (x, y) 位置的元素 </span></li><li id="u86a32297" data-lake-index-type="0"><strong><span class="ne-text">drag from (x1, y1) to (x2, y2)</span></strong><span class="ne-text">：将元素从位置 (x1, y1) 拖动到 (x2, y2) </span></li><li id="u50ec1ce7" data-lake-index-type="0"><strong><span class="ne-text">scroll (x)</span></strong><span class="ne-text">：垂直滚动屏幕，偏移像素为 x 。x 为正值时向上滚动，为负值时向下滚动 </span></li><li id="ub20fb38f" data-lake-index-type="0"><strong><span class="ne-text">press key: key_content</span></strong><span class="ne-text">：按下键盘上 key_content 对应的按键 </span></li><li id="u707dfc67" data-lake-index-type="0"><strong><span class="ne-text">hotkey (key1, key2)</span></strong><span class="ne-text">：按下由 key1 和 key2 组成的快捷键 </span></li><li id="u9c07f036" data-lake-index-type="0"><strong><span class="ne-text">hotkey (key1, key2, key3)</span></strong><span class="ne-text">：按下由 key1、key2 和 key3 组成的快捷键 </span></li><li id="ubcbb3fee" data-lake-index-type="0"><strong><span class="ne-text">type text: text_content</span></strong><span class="ne-text">：在键盘输入 text_content 内容 </span></li><li id="u60cc4fdb" data-lake-index-type="0"><strong><span class="ne-text">wait</span></strong><span class="ne-text">：等待一段时间，通常用于等待系统响应、屏幕刷新、广告结束 </span></li><li id="ud93821b0" data-lake-index-type="0"><strong><span class="ne-text">finish</span></strong><span class="ne-text">：表明任务已完成 </span></li><li id="u53657c0e" data-lake-index-type="0"><strong><span class="ne-text">fail</span></strong><span class="ne-text">：表明任务失败，即因提供信息不足，任务无法执行</span></li></ol><h3 id="dh7fF"><span class="ne-text">回复格式</span></h3><p id="u9cdca1d4" class="ne-p"><span class="ne-text" style="color: #DF2A3F">{Your thought process}</span><span class="ne-text">（你的思维过程）</span></p><p id="uaa523f9e" class="ne-p"><span class="ne-text">Action: {The specific action you choose to take}（操作：你选择执行的具体操作） </span></p><p id="u47f94126" class="ne-p"><span class="ne-text">你的任务是：</span><span class="ne-text" style="color: #DF2A3F">{task_description} </span><span class="ne-text"><br /></span><span class="ne-text">为达到当前屏幕状态，你之前的操作和思路历史：</span><span class="ne-text" style="color: #DF2A3F">{history_str} </span><span class="ne-text"><br /></span><span class="ne-text">结合</span><span class="ne-text" style="color: #DF2A3F">截图</span><span class="ne-text">，你接下来会执行哪一步操作来协助完成任务？</span></p></details>
 <details class="lake-collapse"><summary id="u083d6018"><span class="ne-text" style="font-size: 16px">【笔记】LLaMA-Factory 框架</span></summary><p id="u93bc5f24" class="ne-p"><span class="ne-text" style="font-size: 16px">官方仓库：</span><a href="https://github.com/hiyouga/LLaMA-Factory" data-href="https://github.com/hiyouga/LLaMA-Factory" target="_blank" class="ne-link"><span class="ne-text" style="font-size: 16px">https://github.com/hiyouga/LLaMA-Factory</span></a></p><p id="u4efb6905" class="ne-p"><span class="ne-text" style="font-size: 16px">LLaMA-Factory 支持多种预训练模型和微调算法，提供了一套完整的工具和接口，使得用户能够轻松地对预训练的模型进行定制化的训练和调整，以适应特定的应用场景。</span></p><p id="u7fe859e3" class="ne-p"><span class="ne-text" style="font-size: 16px"></span></p><p id="u5f7b4f5a" class="ne-p"><span class="ne-text" style="font-size: 16px">类似的还有peft库。</span></p></details>
 
-# 测试阶段：任务集的选取与评估
+# 2. 测试阶段：任务集的选取与评估
 
 <details class="lake-collapse"><summary id="ue6dfd558"><span class="ne-text" style="font-size: 16px">【笔记】Benchmark 和 Baseline</span></summary><p id="u946861c6" class="ne-p"><span class="ne-text" style="font-size: 16px">Benchmark 是于用于评测方法表现的任务/平台，是评测环境，相当于“一个考场、一张试卷”；Baseline 是于一组用于比较的已有方法/模型，是对比对象，相当于“其他考生”。 Benchmark 的目的是为了</span><strong><span class="ne-text" style="font-size: 16px">公平评估模型性能</span></strong><span class="ne-text" style="font-size: 16px">，而 Baseline 的目的是为了</span><strong><span class="ne-text" style="font-size: 16px">作为参照，验证新方法的改进效果</span></strong><span class="ne-text" style="font-size: 16px">。  </span></p><div id="xtww4" class="ne-bookmark"><a href="https://zhuanlan.zhihu.com/p/31427279391" target="_blank">https://zhuanlan.zhihu.com/p/31427279391</a></div></details>
 
-## Benchmark
+## 2.1. Benchmark
 论文中使用的 Benchmark 为 WindowsAgentArena V2 和 <font style="color:rgb(54, 54, 54);">OSWorld。</font>
 
-### WindowsAgentArena
+### 2.1.1. WindowsAgentArena
 官方仓库：[https://github.com/microsoft/WindowsAgentArena](https://github.com/microsoft/WindowsAgentArena)
 
 > <font style="color:rgb(31, 35, 40);">Windows Agent Arena (WAA) 是一个可扩展的 Windows AI Agent 平台，用于测试和基准化多模态、桌面 AI Agent。WAA 为研究人员和开发人员提供了一个可重复和逼真的 Windows 操作系统环境，用于 AI 研究，其中可以在各种任务中测试 Agent AI 工作流程。</font>
@@ -74,7 +75,8 @@ PC Agent-E 为 Claude 3.7 Sonnet 提供：任务描述，历史和截图，并�
 
 <details class="lake-collapse"><summary id="u14cc67ff"><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">配置和安装 WindowsAgentArena</span></summary><p id="u19ca677a" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">Docker 部署。</span></p><p id="ubd7f5e8d" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">Python环境：推荐 Python 3.9。</span></p><p id="ube10ea15" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgba(0, 0, 0, 0.85); font-size: 16px">被评估的虚拟机系统：Windows 11。</span></p></details>
 
-### WindowsAgentArena V2（使用）
+### 2.1.2. WindowsAgentArena V2（使用）
+
 本论文在 WindowsAgentArena 的基础上进行了以下改进，并最终在 V2 进行评估。
 
 ![](https://cdn.nlark.com/yuque/0/2025/png/39039688/1754482786077-7e5266fb-1e61-4c2d-a2ae-911c6f283d98.png)
@@ -103,7 +105,7 @@ V2 为了验证初始状态，结合了基于规则（rule-based）和基于LLM�
 
 V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人工评估人员，以提高评估的可靠性。
 
-### <font style="color:rgb(54, 54, 54);">OSWorld（使用）</font>
+### 2.1.3. OSWorld（使用）</font>
 
 官方仓库：[https://github.com/xlang-ai/OSWorld](https://github.com/xlang-ai/OSWorld)
 
@@ -111,7 +113,7 @@ V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人�
 
 <details class="lake-collapse"><summary id="u6927edee"><span class="ne-text">配置和安装 OSWorld</span></summary><p id="ue85d8abe" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">宿主操作系统：支持 Ubuntu，Windows 或 Mac OS。支持 Docker。</span></p><p id="ubf677516" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">Python环境：要求 Python&gt;=3.10。</span></p><p id="ue78945e1" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgb(31, 35, 40); font-size: 16px">虚拟机软件：支持</span><span class="ne-text" style="color: rgba(0, 0, 0, 0.85); font-size: 16px"> VMware Workstation Pro（Windows/Linux）、VMware Fusion（macOS）和 VirtualBox。</span></p><p id="ub9769b77" class="ne-p"><span class="ne-text" style="font-size: 16px">✅</span><span class="ne-text" style="color: rgba(0, 0, 0, 0.85); font-size: 16px">被评估的虚拟机系统：Ubuntu，Windows 或 Mac OS。</span></p></details>
 
-## Baseline
+## 2.2. Baseline
 
  Claude / UI-TARS / Qwen 等。
 
@@ -119,9 +121,9 @@ V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人�
 
 
 
-## 实验结果
+## 2.3. 实验结果
 
-### 性能评估（WindowsAgentArena-V2）
+### 2.3.1. 性能评估（WindowsAgentArena-V2）
 
 1. 结果
 
@@ -143,7 +145,7 @@ V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人�
 + PC Agent-E 改进主要源于长期规划能力的提升。训练后的 PC Agent-E 生成的思考过程明显更长，并在验证、反思和自我修正方面表现出更强的推理能力。
 + Qwen2.5-VL-72B 和 PC Agent-E 有时也会因 Grounding 和 Knowledge 问题而出现失败。
 
-### 验证 Trajectory Boost 效果的训练时期的动作增强
+### 2.3.2. 验证 Trajectory Boost 效果的训练时期的动作增强
 
 在训练过程中改变所使用的合成动作数量，并评估模型性能。
 
@@ -155,7 +157,7 @@ V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人�
 
 随着动作决策数量的增加，模型性能显著提升。与仅基于人类轨迹训练相比，PC Agent-E 实现了显著更高的增益。
 
-### 测试时期的动作增强
+### 2.3.3. 测试时期的动作增强
 
 评估该模型在任务执行过程中允许的最大步数情况下的区别。
 
@@ -167,7 +169,7 @@ V2 识别并纠正了几处评估错误，并在一些复杂任务上依赖人�
 
  PC Agent-E 在测试阶段能更好地利用更长的执行时间（执行动作的步数），表现出更强的适应性和修复能力。  
 
-### 跨平台的泛化能力（OSWorld）
+### 2.3.4. 跨平台的泛化能力（OSWorld）
 
 1. 结果
 

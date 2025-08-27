@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="
+# 实验（推理阶段）
+## 虚拟环境
+### WebShop介绍（摘自WebShop论文）
++ **环境**：一个模拟的电子商务平台，用于基准测试。">
+<meta property="og:title" content="[论文笔记] Agent Q Advanced Reasoning and Learning for Autonomous AI Agents (2)">
+<meta property="og:description" content="
+# 实验（推理阶段）
+## 虚拟环境
+### WebShop介绍（摘自WebShop论文）
++ **环境**：一个模拟的电子商务平台，用于基准测试。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20Agent%20Q%20Advanced%20Reasoning%20and%20Learning%20for%20Autonomous%20AI%20Agents%20%282%29.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[论文笔记] Agent Q Advanced Reasoning and Learning for Autonomous AI Agents (2)</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[论文笔记] Agent Q Advanced Reasoning and Learning for Autonomous AI Agents (2)</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>实验（推理阶段）</h1>
+<h2>虚拟环境</h2>
+<h3>WebShop介绍（摘自WebShop论文）</h3>
+<ul>
+<li><strong>环境</strong>：一个模拟的电子商务平台，用于基准测试。</li>
+<li><strong>任务场景</strong>：搜索页（search）、结果页（results）、商品详情页（item）、进一步的详情页（item-detail）等。</li>
+<li><strong>是否多跳</strong>：
+<ul>
+<li>涉及多页面导航：Agent 需从搜索页面开始，通过点击搜索结果、进入商品页面，进一步定制选项后进行购买，跨越多个页面完成任务。但都在同一模拟网站中进行。</li>
+<li>WebShop 的任务虽多页面跳转，但限定在同一站点／模拟环境中。</li>
+</ul>
+</li>
+<li><strong>任务评估</strong>：
+<ul>
+<li>通过解析HTML内容来获取agent执行操作后的结果数据。</li>
+<li><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0f70fdcef4607dd37915f03dca24aaa42c3e03c314e0e103fc4a9d323452d6c9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f38336461303764633437333933356462376364353334663433333162333634372e737667"><img src="https://camo.githubusercontent.com/0f70fdcef4607dd37915f03dca24aaa42c3e03c314e0e103fc4a9d323452d6c9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f38336461303764633437333933356462376364353334663433333162333634372e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/83da07dc473935db7cd534f4331b3647.svg" style="max-width: 100%;"></a></li>
+<li>由类型、属性、选项、价格匹配组成。</li>
+<li>r＝1时任务成功。</li>
+</ul>
+</li>
+</ul>
+<h3>实验结果</h3>
+<ul>
+<li><strong>基础模型</strong>（xLAM-v0.1-r）零样本成功率：28.6%。</li>
+<li><strong>基础模型+RFT</strong>（仅使用成功轨迹）：提升至31.3%。</li>
+<li><strong>基础模型+DPO</strong>（成功 vs 失败轨迹）：提升至40.6%，说明DPO优于RFT。</li>
+<li><strong>基础模型+MCTS</strong>（推理阶段启动MCTS）：提升至48.4%，说明推理时使用MCTS有巨大性能提升。</li>
+<li><strong>Agent Q</strong>（训练阶段包含MCTS+AI监督+DPO，零样本）：41.5%。</li>
+<li><strong>Agent Q+MCTS</strong>（推理阶段启用MCTS）：提升至50.5%，说明推理时使用MCTS有巨大性能提升。</li>
+</ul>
+<h3>图表说明</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d9dbe9a00eab73686d918be8610ab9b3c76008c7e9c5a49dce1c330aca924f41/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363230343533393930332d65313365396238332d643932312d343436382d623632312d3337653735373434376539642e706e67"><img src="https://camo.githubusercontent.com/d9dbe9a00eab73686d918be8610ab9b3c76008c7e9c5a49dce1c330aca924f41/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363230343533393930332d65313365396238332d643932312d343436382d623632312d3337653735373434376539642e706e67" alt="图3：不同方法在WebShop任务（Yao et al. (2022)）上的成功率。所有模型都基于xLAM-v0.1-r Zhang et al. (2024c)。在xLAM-v0.1-r上进行RFT和DPO训练，性能分别从28.6%提升到31.3%和37.5%。然而，这些方法仍然落后于平均人类表现的50.0%。我们的方法，Agent Q + MCTS，在基线模型上实现了显著的增益（相对提升76.57%），在WebShop上以50.5%的成功率超越了平均水平的人类表现。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1756204539903-e13e9b83-d921-4468-b621-37e757447e9d.png" style="max-width: 100%;"></a></p>
+<details><summary id="user-content-u569dcfec"><span>【AI生成】图3解释</span></summary><p id="user-content-u020c43ce"><span>这张图是衡量Agent Q框架性能的核心图表之一。它清晰地展示了在</span><strong><span>模拟环境（WebShop）</span></strong><span> 中，不同方法的性能对比，突出了Agent Q+MCTS组合的巨大优势。</span></p><h4 id="user-content-s7h69"><strong><span>整体解读</span></strong></h4><p id="user-content-uf7ed7bb4"><span>这是一个条形图，横轴是不同的方法或模型，纵轴是它们在WebShop基准测试上的</span><strong><span>成功率为百分比</span></strong><span>。这个成功率达到</span><strong><span>50%</span></strong><span> 是一个关键的参考点，因为它代表了“平均人类”的表现水平。</span></p><h4 id="user-content-hew86"><strong><span>各条形柱详解</span></strong></h4><ol><li id="user-content-u790ce1b3"><code class="notranslate"><span>xLAM-v0.1-r</span></code><strong><span> (深紫色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u77ea81bb"><strong><span>含义</span></strong><span>：这是所有其他方法的基线模型。它是经过监督微调（SFT）的LLM，但没有经过额外的强化学习或搜索优化。</span></li><li id="user-content-u33769b07"><strong><span>成绩</span></strong><span>：</span><strong><span>28.6%</span></strong><span>。这表明即使是强大的预训练模型，在没有进一步优化的情况下，其零样本能力也有限。</span></li></ul></ul><ol start="2"><li id="user-content-udebab515"><code class="notranslate"><span>RFT</span></code><strong><span> (深紫色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-ub06686d8"><strong><span>含义</span></strong><span>：Reinforced Fine-Tuning（强化微调）。这是一种基于结果监督（outcome-based supervision）的方法，它使用成功轨迹来训练模型。</span></li><li id="user-content-ubf8be3f2"><strong><span>成绩</span></strong><span>：</span><strong><span>31.3%</span></strong><span>。相比基线模型有小幅提升（+2.7%），但效果有限。</span></li></ul></ul><ol start="3"><li id="user-content-u7e156270"><code class="notranslate"><span>GPT-4</span></code><strong><span> (深蓝色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-udf27afc0"><strong><span>含义</span></strong><span>：作为另一个强大的基线模型进行比较。</span></li><li id="user-content-u52b76a39"><strong><span>成绩</span></strong><span>：</span><strong><span>37.5%</span></strong><span>。虽然比xLAM-v0.1-r强，但仍然远低于人类水平。</span></li></ul></ul><ol start="4"><li id="user-content-u139d609b"><code class="notranslate"><span>DPO</span></code><strong><span> (深蓝色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u3b174ab2"><strong><span>含义</span></strong><span>：Direct Preference Optimization（直接偏好优化）。这是一种更先进的RLHF方法，利用成功和失败的轨迹来构建偏好对，从而训练模型。</span></li><li id="user-content-u569450a5"><strong><span>成绩</span></strong><span>：</span><strong><span>40.6%</span></strong><span>。比RFT和GPT-4都好，证明了DPO的有效性，但仍落后于人类。</span></li></ul></ul><ol start="5"><li id="user-content-u8082553d"><code class="notranslate"><span>DPO+BeamSearch</span></code><strong><span> (青色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u5f185ec1"><strong><span>含义</span></strong><span>：在DPO训练的基础上，结合了束搜索（Beam Search）这种推理时的规划技术。</span></li><li id="user-content-u53b4ed36"><strong><span>成绩</span></strong><span>：</span><strong><span>41.5%</span></strong><span>。与纯DPO相比，提升非常小，说明简单的规划技术在这个任务上效果有限。</span></li></ul></ul><ol start="6"><li id="user-content-uc11c8787"><code class="notranslate"><span>AgentQ</span></code><strong><span> (绿色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u8a145498"><strong><span>含义</span></strong><span>：这是指经过</span><strong><span>Agent Q框架</span></strong><span>（即MCTS+AI过程监督+DPO）训练后的模型，但</span><strong><span>在评估时没有启用MCTS搜索</span></strong><span>（即零样本模式）。</span></li><li id="user-content-u3c39a4c3"><strong><span>成绩</span></strong><span>：</span><strong><span>48.4%</span></strong><span>。这个成绩非常关键，它表明仅仅通过训练（DPO），模型的能力就得到了巨大提升，已经接近人类平均水平。</span></li></ul></ul><ol start="7"><li id="user-content-u8766f74e"><code class="notranslate"><span>xLAM + MCTS</span></code><strong><span> (浅绿色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u448f984f"><strong><span>含义</span></strong><span>：将</span><strong><span>未训练的基线模型</span></strong><span>（xLAM-v0.1-r）与</span><strong><span>推理时的MCTS搜索</span></strong><span>相结合。</span></li><li id="user-content-u8b91933e"><strong><span>成绩</span></strong><span>：</span><strong><span>50.0%</span></strong><span>。这个结果非常重要，它证明了</span><strong><span>MCTS搜索本身</span></strong><span>就能带来巨大的性能提升，使一个未经强化训练的模型达到人类平均水平。</span></li></ul></ul><ol start="8"><li id="user-content-u36923bae"><code class="notranslate"><span>Human (average)</span></code><strong><span> (浅绿色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u7d6b9488"><strong><span>含义</span></strong><span>：平均人类的表现。</span></li><li id="user-content-u45aa5c41"><strong><span>成绩</span></strong><span>：</span><strong><span>50.0%</span></strong><span>。作为基准线。</span></li></ul></ul><ol start="9"><li id="user-content-uc5cb8624"><code class="notranslate"><span>AgentQ + MCTS</span></code><strong><span> (亮黄色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u28d20892"><strong><span>含义</span></strong><span>：这是</span><strong><span>最终的、最强的组合</span></strong><span>。它将</span><strong><span>经过训练的Agent Q模型</span></strong><span>与</span><strong><span>推理时的MCTS搜索</span></strong><span>结合起来。</span></li><li id="user-content-u8c74bcff"><strong><span>成绩</span></strong><span>：</span><strong><span>50.5%</span></strong><span>。这是所有方法中最高的，</span><strong><span>超过了平均人类的表现</span></strong><span>。</span></li></ul></ul><ol start="10"><li id="user-content-ua2968edf"><code class="notranslate"><span>Human (expert)</span></code><strong><span> (亮黄色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-uf40af1c3"><strong><span>含义</span></strong><span>：专家人类的表现。</span></li><li id="user-content-u1e952c95"><strong><span>成绩</span></strong><span>：</span><strong><span>59.6%</span></strong><span>。这是人类能达到的最高水平，为未来的研究设定了一个更高的目标。</span></li></ul></ul><h4 id="user-content-lmxo3"><strong><span>核心结论</span></strong></h4><ul><li id="user-content-u980ba91c"><strong><span>训练很重要</span></strong><span>：</span><code class="notranslate"><span>AgentQ</span></code><span>（48.4%） vs </span><code class="notranslate"><span>xLAM-v0.1-r</span></code><span>（28.6%）的对比，证明了通过MCTS生成数据并用DPO训练模型，能极大地提升模型的内在能力。</span></li><li id="user-content-ua4e08dbe"><strong><span>搜索很重要</span></strong><span>：</span><code class="notranslate"><span>xLAM + MCTS</span></code><span>（50.0%） vs </span><code class="notranslate"><span>xLAM-v0.1-r</span></code><span>（28.6%）的对比，证明了在推理时使用MCTS搜索能有效弥补模型推理能力的不足。</span></li><li id="user-content-u8aa31fce"><strong><span>两者结合是关键</span></strong><span>：</span><code class="notranslate"><span>AgentQ + MCTS</span></code><span>（50.5%）的成绩，是</span><strong><span>训练</span></strong><span>（提升模型能力）和</span><strong><span>搜索</span></strong><span>（在执行时进行规划）协同作用的结果。它不仅超越了基线模型，还超越了平均人类表现，展现了该框架的强大潜力。</span></li></ul><p id="user-content-u3c9670ec"><span>总而言之，图3有力地证明了Agent Q框架在模拟环境中的有效性，特别是当将训练和推理时的搜索能力结合起来时，能够产生超越人类平均水平的性能。</span></p></details>
+<h2>真实世界</h2>
+<h3>OpenTable介绍</h3>
+<ul>
+<li><strong>环境</strong>：一个真实世界的餐厅预订网站。</li>
+<li><strong>挑战</strong>：真实、动态、步骤多（平均13.9步，远超WebShop的6.8步）。</li>
+<li><strong>成功判定</strong>：使用 <strong>GPT-4-V</strong> 作为评估器，基于<strong>最终状态截图</strong>和<strong>执行历史</strong>，根据四项标准（时间、人数、信息、点击按钮）给出二元（0/1）成功信号。</li>
+<li><strong>成功判定</strong>：使用<strong>GPT-4-V</strong> 作为评估器，根据<strong>最终状态截图</strong>和<strong>历史</strong>给出二元（0/1）成功信号。</li>
+<li><strong>动作空间</strong>：CLICK, GOTO, TYPE, SUBMIT, CLEAR, SCROLL, ASK USER等。</li>
+</ul>
+<h3>实验结果</h3>
+<ul>
+<li>基础模型（LLaMA-3 70B Instruct）零样本成功率：18.6%。</li>
+<li>RFT：提升至67.2%。</li>
+<li>DPO：提升至71.8%，说明DPO优于RFT。</li>
+<li>RFT+MCTS（推理）：提升至84.3%，说明推理时使用MCTS有巨大性能提升。</li>
+<li>Agent Q：提升至81.7%。</li>
+<li>Agent Q+MCTS（推理）：提升至95.4%，说明推理时使用MCTS有巨大性能提升。</li>
+</ul>
+<h3>图表说明</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/41813291b4bc62d4c0d99616d17f1e706f5d382051eeec17e4a1cd0d23855165/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363231393532393330322d36393732643765382d646361322d343337392d626339382d6566653437363539366632612e706e67"><img src="https://camo.githubusercontent.com/41813291b4bc62d4c0d99616d17f1e706f5d382051eeec17e4a1cd0d23855165/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363231393532393330322d36393732643765382d646361322d343337392d626339382d6566653437363539366632612e706e67" alt="图5：在轨迹结束时，会调用一个GPT-4-V评估器，根据最终观察和动作历史来提供关于智能体表现的反馈，以确定成功得分。该模型被提示以浓缩的执行历史和最终状态的截图作为输入。成功指标是一个二元的0/1值。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1756219529302-6972d7e8-dca2-4379-bc98-efe476596f2a.png" style="max-width: 100%;"></a></p>
+<details><summary id="user-content-u25f62daa"><span>【AI生成】图5解释</span></summary><p id="user-content-u46065691"><span>这张图是理解Agent Q框架如何进行</span><strong><span>最终任务评估</span></strong><span>（Final Task Evaluation）的关键。它展示了在</span><strong><span>训练阶段</span></strong><span>（Training Phase），特别是当使用MCTS探索生成数据时，如何为一个完整的交互序列（trajectory）打上“成功”或“失败”的标签。</span></p><h4 id="user-content-d5ixk"><strong><span>整体流程概览</span></strong></h4><p id="user-content-u3132ca89"><span>整个过程是：</span></p><ol><li id="user-content-uede9b230"><strong><span>执行轨迹</span></strong><span>：智能体从用户查询开始，经过一系列思考、规划和行动，最终到达一个网页状态。</span></li><li id="user-content-u7a9b7a79"><strong><span>调用评估器</span></strong><span>：在轨迹的终点，系统会自动调用一个外部的、强大的语言模型（GPT-4-V）来评判这个轨迹的最终结果。</span></li><li id="user-content-ub890dbb4"><strong><span>获取反馈</span></strong><span>：GPT-4-V根据提供的信息，给出一个二元的成功分数（0或1）和一段文字说明。</span></li></ol><h4 id="user-content-lq7nu"><strong><span>详细分解</span></strong></h4><ol><li id="user-content-u793e9c07"><strong><span>左侧：最终观察 (FINAL OBSERVATION)</span></strong></li></ol><ul><ul><li id="user-content-ua6e4bef7"><span>这是智能体执行完所有操作后，浏览器显示的最终页面截图。</span></li><li id="user-content-u3f6bdfe0"><span>在图中，我们可以看到：</span></li></ul></ul><ul><ul><ul><li id="user-content-u7f192cd4"><span>智能体成功预订了餐厅 </span><strong><span>Fogo de Chao</span></strong><span>。</span></li><li id="user-content-u99cb3c09"><span>预订的日期是 </span><strong><span>8月28日</span></strong><span>（Wed, Aug 28, 2024），但用户请求的是 </span><strong><span>8月29日</span></strong><span>。</span></li><li id="user-content-u87c83f43"><span>预订的时间是 </span><strong><span>晚上7点</span></strong><span>，这与用户请求一致。</span></li></ul></ul></ul><ul><ul><li id="user-content-u10ebd351"><span>这个观察是</span><strong><span>真实的、视觉化的</span></strong><span>，它包含了所有最终的、可验证的信息。</span></li></ul></ul><ol start="2"><li id="user-content-u0ac14fd4"><strong><span>中间：LLM Critic (批评模型)</span></strong></li></ol><ul><ul><li id="user-content-u3220442f"><span>这里的“LLM Critic”实际上指的是</span><strong><span>GPT-4-V</span></strong><span>，它是论文中用于评估任务完成情况的工具。</span></li><li id="user-content-u30711b0f"><span>它接收两个关键输入：</span></li></ul></ul><ul><ul><ul><li id="user-content-ud1c5487f"><strong><span>最终观察</span></strong><span>：即上面的截图。</span></li><li id="user-content-u86f272e4"><strong><span>浓缩的执行历史</span></strong><span>：虽然图中没有直接展示，但论文描述了这一点。这个历史记录了智能体在整个任务中采取的所有关键步骤（如点击了哪个按钮、输入了什么内容等），以便评估器了解整个过程。</span></li></ul></ul></ul><ol start="3"><li id="user-content-u9a2430aa"><strong><span>右侧：评估结果 (Score &amp; Feedback)</span></strong></li></ol><ul><ul><li id="user-content-u856ac15d"><strong><span>Score: 0.0</span></strong><span>：这是最关键的输出。它是一个</span><strong><span>二元（binary）</span></strong><span> 的成功指标。</span><code class="notranslate"><span>0.0</span></code><span> 表示</span><strong><span>失败</span></strong><span>，</span><code class="notranslate"><span>1.0</span></code><span> 表示</span><strong><span>成功</span></strong><span>。</span></li><li id="user-content-uc65e672c"><strong><span>反馈文本</span></strong><span>：“The agent booked a reservation for the correct restaurant, but incorrect date and time.” （智能体为正确的餐厅预订了座位，但日期和时间不正确。）</span></li><li id="user-content-ub8fb8176"><strong><span>核心逻辑</span></strong><span>：尽管智能体完成了大部分工作（找到了正确的餐厅并提交了预订），但由于</span><strong><span>日期错误</span></strong><span>，任务被视为失败。这体现了评估标准的严格性——必须满足所有预设条件才算成功。</span></li></ul></ul><h4 id="user-content-fr2it"><strong><span>为什么需要GPT-4-V？</span></strong></h4><ul><li id="user-content-u9e5b7112"><strong><span>解决真实环境的挑战</span></strong><span>：在OpenTable这样的真实网站上，无法通过程序化的方式（programatically）读取后台数据库来验证预订是否真正成功。例如，系统无法直接知道预订的日期是否正确。</span></li><li id="user-content-u4f85b14a"><strong><span>视觉理解能力</span></strong><span>：GPT-4-V作为一个多模态大模型，具备强大的</span><strong><span>视觉理解能力</span></strong><span>。它能够“看懂”截图中的所有元素（如文本、按钮、图标），并准确地提取出关键信息（如餐厅名称、日期、时间）。</span></li><li id="user-content-u523d8679"><strong><span>综合判断</span></strong><span>：它不仅能识别信息，还能将这些信息与用户查询进行对比，并做出最终的判断。这比简单的文本匹配要复杂得多。</span></li></ul><h4 id="user-content-qr7bc"><strong><span>总结</span></strong></h4><p id="user-content-u7c0bfa75"><span>图5的核心意义在于，它展示了Agent Q框架如何利用一个</span><strong><span>强大的外部模型（GPT-4-V）作为“裁判”</span></strong><span> 来解决真实世界任务评估的难题。这种基于视觉的、综合性的评估方式，确保了训练数据的质量，使得DPO算法能够学习到真正有用的策略，而不仅仅是学会如何在模拟环境中“作弊”。</span></p></details>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0e248e33b9681684520515b2683ce7b59018aee8166fb5486cf8b735f412ab2e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363231393633343733372d35383865346639372d376635312d346433362d626164342d6632646536373964643437632e706e67"><img src="https://camo.githubusercontent.com/0e248e33b9681684520515b2683ce7b59018aee8166fb5486cf8b735f412ab2e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735363231393633343733372d35383865346639372d376635312d346433362d626164342d6632646536373964643437632e706e67" alt="图6：不同方法在OpenTable上的成功率。除非另有说明，所有模型均基于LLaMA-3-70B-Instruct Touvron et al. (2023)。使用DPO和RFT结合MCTS，性能分别从18.6%提升到71.8%和84.3%。我们证明了Agent Q本身实现了81.7%的成功率，而Agent Q + MCTS显著优于所有其他技术，在OpenTable上达到了95.4%的性能。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1756219634737-588e4f97-7f51-4d36-bad4-f2de679dd47c.png" style="max-width: 100%;"></a></p>
+<details><summary id="user-content-u41c9461a"><span>【AI生成】图6解释</span></summary><p id="user-content-u6d16243d"><span>这张图是论文最核心、最令人印象深刻的实验结果之一。它展示了Agent Q框架在</span><strong><span>真实世界网站（OpenTable）</span></strong><span> 上的巨大威力，特别是当将训练后的模型与推理时的MCTS搜索相结合时，其性能达到了惊人的高度。</span></p><h4 id="user-content-d29dd"><strong><span>整体解读</span></strong></h4><p id="user-content-u75adc31a"><span>这是一个条形图，横轴是不同的方法或模型，纵轴是它们在OpenTable任务上的</span><strong><span>成功率为百分比</span></strong><span>。这个图表清晰地呈现了一个“阶梯式”的性能提升过程。</span></p><h4 id="user-content-ofwvi"><strong><span>各条形柱详解</span></strong></h4><ol><li id="user-content-u98586d81"><code class="notranslate"><span>xLAM-v0.1-r</span></code><strong><span> (深紫色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u92d85ba4"><strong><span>含义</span></strong><span>：这是基线模型，一个经过监督微调的LLM。</span></li><li id="user-content-u313abb61"><strong><span>成绩</span></strong><span>：</span><strong><span>0.0%</span></strong><span>。这表明该模型在没有进一步优化的情况下，完全无法完成预订任务。</span></li></ul></ul><ol start="2"><li id="user-content-u22a1b406"><code class="notranslate"><span>LLaMA-3-70B-Instruct Base</span></code><strong><span> (深紫色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-ub2cb8370"><strong><span>含义</span></strong><span>：这是另一个更强的基线模型，即LLaMA-3 70B Instruct模型，但未经过任何特定训练。</span></li><li id="user-content-u0ba0ca14"><strong><span>成绩</span></strong><span>：</span><strong><span>18.6%</span></strong><span>。这代表了该强大模型的</span><strong><span>零样本（zero-shot）能力</span></strong><span>。虽然比第一个基线好得多，但仍然远低于人类水平。</span></li></ul></ul><ol start="3"><li id="user-content-u85cd77aa"><code class="notranslate"><span>GPT-4o</span></code><strong><span> (深蓝色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u61a83307"><strong><span>含义</span></strong><span>：作为另一个强大的基线模型进行比较。</span></li><li id="user-content-ucb6afee9"><strong><span>成绩</span></strong><span>：</span><strong><span>62.6%</span></strong><span>。这显示了即使是顶级的商业模型，在这种复杂的、多步骤的真实世界任务上，其零样本表现也有限。</span></li></ul></ul><ol start="4"><li id="user-content-uad5ad5cc"><code class="notranslate"><span>LLaMA-3-70B-Instruct RFT</span></code><strong><span> (深蓝色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u37d4815a"><strong><span>含义</span></strong><span>：在LLaMA-3 70B Instruct模型上应用了强化微调（Reinforced Fine-Tuning, RFT）。</span></li><li id="user-content-u729c8d55"><strong><span>成绩</span></strong><span>：</span><strong><span>67.2%</span></strong><span>。相比基线模型有显著提升，证明了RFT的有效性。</span></li></ul></ul><ol start="5"><li id="user-content-u3e413b9d"><code class="notranslate"><span>DPO</span></code><strong><span> (青色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u82211396"><strong><span>含义</span></strong><span>：在LLaMA-3 70B Instruct模型上应用了直接偏好优化（Direct Preference Optimization, DPO）。</span></li><li id="user-content-uf5afc21f"><strong><span>成绩</span></strong><span>：</span><strong><span>71.8%</span></strong><span>。比RFT稍好，但效果提升有限。</span></li></ul></ul><ol start="6"><li id="user-content-u71aced3d"><code class="notranslate"><span>AgentQ (No AI Feedback)</span></code><strong><span> (青色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u43a83ae8"><strong><span>含义</span></strong><span>：这是Agent Q框架的一个变体，它使用了MCTS+DPO，但</span><strong><span>去除了AI过程监督</span></strong><span>（即批评模型）。</span></li><li id="user-content-u16871bbb"><strong><span>成绩</span></strong><span>：</span><strong><span>75.2%</span></strong><span>。这个结果非常重要，它证明了即使没有AI反馈，仅通过MCTS探索生成数据并用DPO训练，也能带来显著的性能提升。</span></li></ul></ul><ol start="7"><li id="user-content-u032f02b6"><code class="notranslate"><span>AgentQ</span></code><strong><span> (绿色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u6750be1a"><strong><span>含义</span></strong><span>：这是完整的Agent Q框架，包含了</span><strong><span>MCTS探索、AI过程监督和DPO训练</span></strong><span>。</span></li><li id="user-content-u062a76c6"><strong><span>成绩</span></strong><span>：</span><strong><span>81.7%</span></strong><span>。这是</span><strong><span>零样本</span></strong><span>（zero-shot）性能，即模型在不使用MCTS搜索的情况下，仅凭自身学习到的能力执行任务。这个成绩已经是一个巨大的飞跃，是基线模型的4倍多。</span></li></ul></ul><ol start="8"><li id="user-content-ua272686a"><code class="notranslate"><span>RFT + MCTS</span></code><strong><span> (浅绿色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-uc21d7b58"><strong><span>含义</span></strong><span>：将RFT训练的模型与</span><strong><span>推理时的MCTS搜索</span></strong><span>相结合。</span></li><li id="user-content-u8b68a0d0"><strong><span>成绩</span></strong><span>：</span><strong><span>84.3%</span></strong><span>。这证明了MCTS搜索本身就能极大地提升模型的决策质量，使一个未经充分训练的模型达到很高的性能。</span></li></ul></ul><ol start="9"><li id="user-content-u55d980af"><code class="notranslate"><span>AgentQ + MCTS</span></code><strong><span> (亮黄色)</span></strong><span>：</span></li></ol><ul><ul><li id="user-content-u6d232503"><strong><span>含义</span></strong><span>：这是最终的、最强的组合。它将</span><strong><span>经过完整训练的Agent Q模型</span></strong><span>与</span><strong><span>推理时的MCTS搜索</span></strong><span>结合起来。</span></li><li id="user-content-u94fe7415"><strong><span>成绩</span></strong><span>：</span><strong><span>95.4%</span></strong><span>。这是所有方法中最高的，标志着Agent Q框架的巅峰性能。这个成绩不仅远超所有基线模型，甚至可能接近或超过了人类专家的水平（文中提到专家人类为59.6%，但这里指的可能是平均人类）。</span></li></ul></ul><h4 id="user-content-hu2tv"><strong><span>核心结论</span></strong></h4><ul><li id="user-content-u943f00b1"><strong><span>训练至关重要</span></strong><span>：从 </span><code class="notranslate"><span>Base</span></code><span> (18.6%) 到 </span><code class="notranslate"><span>AgentQ</span></code><span> (81.7%) 的巨大差距，证明了通过MCTS+DPO+AI反馈进行训练，能将一个强大的基础模型的潜力发挥到极致。</span></li><li id="user-content-ua1c69f54"><strong><span>搜索是关键</span></strong><span>：从 </span><code class="notranslate"><span>AgentQ</span></code><span> (81.7%) 到 </span><code class="notranslate"><span>AgentQ + MCTS</span></code><span> (95.4%) 的提升，证明了在推理时启用MCTS搜索，能让模型进行更高级的规划和探索，从而获得“超人”般的性能。</span></li><li id="user-content-u6e6c6c37"><strong><span>两者结合是王道</span></strong><span>：</span><code class="notranslate"><span>AgentQ + MCTS</span></code><span> 是一个完美的组合，它结合了</span><strong><span>强大的内在能力</span></strong><span>（训练）和</span><strong><span>卓越的外部工具</span></strong><span>（搜索），共同创造了前所未有的高成功率。</span></li></ul><p id="user-content-u5add68e8"><span>总而言之，图6有力地证明了Agent Q框架在解决复杂、真实的Web代理任务方面的巨大潜力，尤其是在将训练和推理时的搜索能力相结合时，能够实现质的飞跃。</span></p></details></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

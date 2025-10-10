@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# Overview
+![图1：WebPilot 概览。">
+<meta property="og:title" content="[论文笔记] WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration">
+<meta property="og:description" content="# Overview
+![图1：WebPilot 概览。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20WebPilot-%20A%20Versatile%20and%20Autonomous%20Multi-Agent%20System%20for%20Web%20Task%20Execution%20with%20Strategic%20Exploration.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[论文笔记] WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[论文笔记] WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/7" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>Overview</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e1ccbad81aaf4a96d3e77d1e98b581cbaf4326871c74d328a030766505c5f6c3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735383838373830383737332d34653631376564392d373761372d343730382d383639322d3264656338393332656164322e706e67"><img src="https://camo.githubusercontent.com/e1ccbad81aaf4a96d3e77d1e98b581cbaf4326871c74d328a030766505c5f6c3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735383838373830383737332d34653631376564392d373761372d343730382d383639322d3264656338393332656164322e706e67" alt="图1：WebPilot 概览。GOS：目标导向选择；RENE：反思增强的节点扩展；DES：动态评估与模拟；MVB：最大价值反向传播；HTD：分层任务分解；RTA：反思式任务调整。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1758887808773-4e617ed9-77a7-4708-8692-2dec8932ead2.png" style="max-width: 100%;"></a></p>
+<h1>Global Optimization(全局优化)</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ba375b33d664c7bc44916b8a05f305ff0ee9e5ac561ec0836864ed8e0e1cfddc/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393032393230373830392d34323563366238372d396561622d343732372d616136392d3363616532326437303063312e706e67"><img src="https://camo.githubusercontent.com/ba375b33d664c7bc44916b8a05f305ff0ee9e5ac561ec0836864ed8e0e1cfddc/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393032393230373830392d34323563366238372d396561622d343732372d616136392d3363616532326437303063312e706e67" alt="Global Optimization" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1759029207809-425c6b87-9eab-4727-aa69-3cae22d700c1.png" style="max-width: 100%;"></a></p>
+<h2>I. Plan Generation (计划生成)</h2>
+<p>Planner把宏观的用户指令分解为多个子任务。</p>
+<p>执行工作的智能体：Planner</p>
+<p>输入：宏观的用户指令（邀请David进入项目A并告诉我他的邮箱地址）和少量的“高层次演示示例”。</p>
+<p>输出：多个子任务P = {T₁, T₂, ..., Tₙ}。</p>
+<h2>II. Next Subtask Ti (下一个子任务 Ti) &lt;分支判断点&gt;</h2>
+<p>系统开始按顺序处理每个子任务。</p>
+<ol>
+<li>如果Ti是信息提取任务（如Extract the email）</li>
+</ol>
+<p>流程跳转到Info Extraction。Extractor直接从当前页面的 Actree 中查找并提取所需的信息，然后将结果返回给 Controller 进行评估。</p>
+<p>智能体：Extractor</p>
+<p>输入：当前的子任务 Ti 和当前环境的状态 o_t（即最新的 Accessibility Tree）。</p>
+<p>输出：提取出的具体信息。</p>
+<p>该结果随后被传递给 Controller 进行下一步的**III. Completeness Assessment**。</p>
+<ol start="2">
+<li>如果Ti是操作任务（如Navigate to 'Members'）</li>
+</ol>
+<p>流程会进入右侧 <strong>Local Optimization (局部优化)</strong> 阶段，启动一个完整的 MCTS 循环（GOS → RENE → DES → MVB），直到满足终止条件（如达到最大节点数 nmax 或被 Controller 主动终止）。</p>
+<p>智能体：Explorer, Verifier, Appraiser, Controller</p>
+<p>输入：当前的子任务 Ti 和当前环境的状态 o_t。</p>
+<p>输出：执行了一系列动作后的最新状态 o_t+1。</p>
+<h3>Local Optimization (局部优化)</h3>
+<p>在后文中会具体介绍Local Optimization的工作流程，这里仅介绍图1中RENE和DES的部分。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/dc5d94b72b9f499c49f8ea6a669b03117a5129e57fb78fa48619b9f412e78bd2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393033323539343637322d65386661333636372d323332372d343332622d623432612d3665646335663535316537352e706e67"><img src="https://camo.githubusercontent.com/dc5d94b72b9f499c49f8ea6a669b03117a5129e57fb78fa48619b9f412e78bd2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393033323539343637322d65386661333636372d323332372d343332622d623432612d3665646335663535316537352e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1759032594672-e8fa3667-2327-432b-b42a-6edc5f551e75.png" style="max-width: 100%;"></a></p>
+<h4>RENE</h4>
+<p>执行动作并评估，生成反思。</p>
+<p>智能体：Explorer</p>
+<p>输入：动作 aₜ。</p>
+<p>过程：</p>
+<ol>
+<li>通过自动化工具在真实浏览器环境中执行该动作（不是模拟）；</li>
+<li>比较执行前后的状态变化，判断动作是否达到了预期效果。</li>
+<li>根据动作效果进行思考，生成反思。</li>
+</ol>
+<p>输出：生成两种反思。</p>
+<ol>
+<li>Child Reflection (Rct)：<br>
+"There is a 'Members' link. Next, I could use it to get to the target page."<br>
+生成时机：无论动作成功与否，只要观察到有用信息。<br>
+目的：为当前路径的下一次扩展提供方向，维持思维链连贯性。</li>
+<li>Sibling Reflection (Rst)：<br>
+"After clicking 'Settings', I cn't see elements related to 'Members', so I should not click it again."<br>
+生成时机：当动作未达到预期效果时。<br>
+目的：警告其他可能路径（兄弟节点）避免重复错误。</li>
+</ol>
+<h4>DES</h4>
+<h5>Step 1：动作潜力评估</h5>
+<p>智能体：Appraiser<br>
+输入：</p>
+<ol>
+<li>动作效果 Effect(at)（来自RENE阶段）</li>
+<li>新的状态 ot+1（来自RENE阶段）</li>
+<li>当前子任务 Ti<br>
+过程：计算状态的总价值。<br>
+评估动作效果Seff(at)和评估未来潜力Sfut(ot+1)。<br>
+输出：</li>
+<li>评估动作效果 Seff(at)："The action led to the target page! The score is：8"</li>
+<li>评估未来潜力 Sfut(ot+1)："The page shows the Members information! The score is：9"</li>
+</ol>
+<h5>Step 2：计算状态总价值与Q值更新</h5>
+<p>智能体：无（系统内部计算）<br>
+输入：Seff(at) 和 Sfut(ot+1)<br>
+过程：计算加权总价值：Stotal(at, ot+1) = weff · Seff(at) + wfut · Sfut(ot+1)，该值也为Q值。<br>
+输出：总价值 Stotal（Q值）。</p>
+<h5>Step 3：动作完成度评估与前向模拟</h5>
+<p>智能体：Controller, Explorer<br>
+输入：当前子任务 Ti，已执行的动作序列 Ht+1 和当前状态 ot+1<br>
+过程：</p>
+<ol>
+<li>Controller判断是否完成子任务，当判断为未完成时，执行一步前向模拟。</li>
+<li>Explorer一步前向模拟（仅当子任务未完成时执行），进行纯文本预测（非真实执行）；</li>
+</ol>
+<p>输出：若状态未完成，则生成 Rsim。</p>
+<h2>III. Completeness Assessment (完成度评估)</h2>
+<p>如果Ti是信息提取任务（如Extract the email），则判断这个操作类子任务是否完成；如果Ti是信息提取任务（如Navigate to 'Members'），则在 Extractor 完成信息提取后，Controller 会评估提取到的信息是否满足要求。</p>
+<p>无论是哪种情况，如果完成，则把Ti放入Finished Subtasks里，否则生成对失败原因的分析，并执行IV。</p>
+<p>智能体：Controller</p>
+<p>输入：当前正在执行的子任务 Tᵢ、已执行的动作序列 {a₁, a₂, ..., aₜ}、以及最新的环境观察 oₜ₊₁。</p>
+<p>输出：二元判断结果 Compₜ（完成或未完成）。</p>
+<h2>IV. Subtask Reflection (子任务反思)</h2>
+<p>当上一步Controller判断该子任务未完成时，此步骤被触发，用于学习经验教训。</p>
+<p>智能体：Controller</p>
+<p>输入：子任务 Tᵢ 的目标、执行过的动作序列、最终的观察结果 oₜ₊₁，以及Controller对失败原因的分析。</p>
+<p>输出：一条文本形式的反思 R_sub。</p>
+<h2>V. Plan Refinement (计划精炼)</h2>
+<p>Planner利用 IV 阶段Controller产生的反思，对原始计划进行动态修正。</p>
+<p>输入：Planner</p>
+<p>输出：一个经过更新和改进的新计划P = {T₁', T₂', ..., Tₙ'}。</p>
+<h1>Global Optimization(局部优化：MCTS)</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/607fd5dd582843834236874d2cb4bc3ea65c91f19ae6514da9dab08bef2c256d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393231373030333131352d62323934323337322d653364362d346438332d393132662d3861336234383532613263392e706e67"><img src="https://camo.githubusercontent.com/607fd5dd582843834236874d2cb4bc3ea65c91f19ae6514da9dab08bef2c256d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393231373030333131352d62323934323337322d653364362d346438332d393132662d3861336234383532613263392e706e67" alt="图2：WebPilot局部优化阶段的概览，重点突出关键组件：目标导向选择（GOS）、反思增强节点扩展（RENE）、动态评估与模拟（DES）以及最大价值回溯传播（MVB）。本例中的子任务是“导航至‘Pages’站点”。详细结果请参阅附录。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1759217003115-b2942372-e3d6-4d83-912f-8a3b4852a2c9.png" style="max-width: 100%;"></a></p>
+<h2><strong>GOS (Goal-Oriented Selection)</strong></h2>
+<p>Explorer基于LLM直觉和修改的PUCT公式从过滤后的动作空间中选择最有希望的动作。</p>
+<p>智能体：Explorer</p>
+<p>输入：</p>
+<ol>
+<li>当前观察 ot (当前网页的状态)</li>
+<li>当前子任务 Ti</li>
+<li>历史动作 Ht</li>
+<li>反思信息 Rt (包含战术反思和战略反思)</li>
+<li>延续性推理 Ct-1</li>
+</ol>
+<p>过程：利用LLM先验知识筛选最有希望的路径，并利用PUCT公式选择其中最有希望的动作。</p>
+<p>输出：一个具体的动作 at 和该动作对应的意图 It。</p>
+<h2><strong>RENE (Reflection-Enhanced Node Expansion)</strong></h2>
+<p>Explorer在真实浏览器环境中执行动作，输出新状态、生成反思（子节点和兄弟节点）。</p>
+<h3>Step 1：接收动作并验证</h3>
+<p>智能体：Verifier</p>
+<p>输入：GOS 阶段选定的动作 aₜ 和意图 Iₜ。</p>
+<p>过程：</p>
+<ol>
+<li>首先检查动作格式是否正确；</li>
+<li>确认该动作在兄弟节点中没有重复，避免重复尝试相同动作。</li>
+</ol>
+<p>输出：验证通过的动作，准备执行。</p>
+<h3>Step 2：执行动作并获取新状态</h3>
+<p>智能体：Explorer</p>
+<p>输入：验证通过的动作 aₜ。</p>
+<p>过程：</p>
+<ol>
+<li>通过自动化工具在真实浏览器环境中执行该动作（不是模拟）；</li>
+<li>捕获执行后的环境变化。</li>
+</ol>
+<p>输出：新的状态 (sₜ₊₁, oₜ₊₁)，其中 oₜ₊₁ 是新的 Accessibility Tree。</p>
+<h3>Step 3：评估动作效果</h3>
+<p>智能体：Explorer</p>
+<p>输入：旧状态 oₜ、新状态 oₜ₊₁、原始意图 Iₜ。</p>
+<p>过程：</p>
+<ol>
+<li>Explorer 比较执行前后的状态变化；</li>
+<li>判断动作是否达到了预期效果。</li>
+</ol>
+<p>输出：动作效果 Effect(aₜ)。</p>
+<h3>Step 4：生成战术反思</h3>
+<p>智能体：Explorer</p>
+<p>输入：动作效果 Effect(aₜ)、子任务 Tᵢ、目标状态。</p>
+<p>过程：根据动作效果进行思考，生成反思。</p>
+<p>输出：生成两种反思。</p>
+<ol>
+<li>
+<p>Child Reflection (Rct)：<br>
+"There is a 'Members' link. Next, I could use it to get to the target page."<br>
+生成时机：无论动作成功与否，只要观察到有用信息。<br>
+目的：为当前路径的下一次扩展提供方向，维持思维链连贯性。</p>
+</li>
+<li>
+<p>Sibling Reflection (Rst)：<br>
+"After clicking 'Settings', I can't see elements related to 'Members', so I should not click it again."<br>
+生成时机：当动作未达到预期效果时。<br>
+目的：警告其他可能路径（兄弟节点）避免重复错误。</p>
+</li>
+</ol>
+<h2><strong>DES (Dynamic Evaluation and Simulation)</strong></h2>
+<p>Appraiser评估动作效果和状态潜力，计算得分；Explorer进行一步前向模拟预测结果，输出状态总价值Stotal（Q值）和Simulation Reflection Rsim。</p>
+<h3>step 1：动作潜力评估</h3>
+<p>智能体：Appraiser</p>
+<p>输入：</p>
+<ol>
+<li>动作效果 Effect(at)（来自RENE阶段）</li>
+<li>新的状态 ot+1（来自RENE阶段）</li>
+<li>当前子任务 Ti<br>
+过程：计算状态的总价值。<br>
+评估动作效果Seff(at)和评估未来潜力Sfut(ot+1)。</li>
+</ol>
+<p>输出：</p>
+<ol>
+<li>评估动作效果 Seff(at)："The action led to the target page! The score is：8"</li>
+<li>评估未来潜力 Sfut(ot+1)："The page shows the Members information! The score is：9"</li>
+</ol>
+<h3>Step 2：计算状态总价值与Q值更新</h3>
+<p>智能体：无（系统内部计算）</p>
+<p>输入：Seff(at) 和 Sfut(ot+1)</p>
+<p>过程：计算加权总价值：Stotal(at, ot+1) = weff · Seff(at) + wfut · Sfut(ot+1)，该值也为Q值。</p>
+<p>输出：总价值 Stotal。</p>
+<h3>step 3：动作完成度评估</h3>
+<p>智能体：Controller</p>
+<p>输入：当前子任务 Ti，已执行的动作序列 Ht+1 和当前状态 ot+1</p>
+<p>过程：判断是否完成子任务。</p>
+<p>输出：二元判断结果 Ct（完成/未完成）。当判断为未完成时，执行一步前向模拟。</p>
+<h3>step 4：一步前向模拟（仅当子任务未完成时执行）</h3>
+<p>智能体：Explorer</p>
+<p>输入：当前状态 ot+1，子任务 Ti和二元判断结果 Ct（未完成）。</p>
+<p>过程：</p>
+<ol>
+<li>生成模拟动作 at+1sim 和意图 It+1sim， LLM进行纯文本预测（非真实执行）；</li>
+<li>生成 Simulation Reflection (Rsim)，指导下一轮MCTS的GOS。</li>
+</ol>
+<p>输出：生成 Rsim。</p>
+<h2><strong>MVB (Maximal Value Backpropagation)</strong></h2>
+<p>系统将叶节点的Q值沿路径回溯，使用最大值策略更新祖先节点的Q值。</p>
+<p>智能体：Controller</p>
+<p>输入：所有子节点的状态及其Q值 Q(st+1)</p>
+<p>目的：反向传播扩展节点奖励，使用最大值策略。</p>
+<p>输出：父节点更新后的Q值，计算方式为 max Q(st+1)</p>
+<h2>具体数值设置</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th><strong>参数类别</strong></th>
+<th><strong>参数名称 / 描述</strong></th>
+<th><strong>具体数值 / 设置</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>搜索控制参数</strong></td>
+<td>最大节点数（Max node count per subtask, <code class="notranslate">nmax</code>）</td>
+<td><strong>10</strong></td>
+<td>每个子任务最多扩展 10 个节点</td>
+</tr>
+<tr>
+<td></td>
+<td>探索偏置（Exploration bias, <code class="notranslate">wpuct</code>）</td>
+<td><strong>5</strong></td>
+<td>平衡探索与利用，用于 GOS 中的 PUCT 公式</td>
+</tr>
+<tr>
+<td></td>
+<td>搜索深度限制（Search depth limit）</td>
+<td><strong>5</strong></td>
+<td>MCTS 树最大深度为 5 层</td>
+</tr>
+<tr>
+<td></td>
+<td>分支数（Number of branches）</td>
+<td><strong>3</strong></td>
+<td>每个节点最多扩展 3 个子节点，基于 LLM 初始直觉通常不超过 3 个相关元素</td>
+</tr>
+<tr>
+<td><strong>奖励机制参数</strong></td>
+<td>动作有效性权重（<code class="notranslate">weff</code>）</td>
+<td><strong>未明确给出</strong></td>
+<td>用于奖励函数 <code class="notranslate">Stotal = weff·Seff + wfut·Sfut</code>，平衡动作有效性</td>
+</tr>
+<tr>
+<td></td>
+<td>未来潜力权重（<code class="notranslate">wfut</code>）</td>
+<td><strong>未明确给出</strong></td>
+<td>同上，平衡未来状态潜力</td>
+</tr>
+<tr>
+<td></td>
+<td>评分范围</td>
+<td><strong>0–10 分制</strong></td>
+<td>Seff 和 Sfut 均使用细粒度 0–10 评分</td>
+</tr>
+<tr>
+<td><strong>LLM 配置（影响 MCTS）</strong></td>
+<td>使用模型</td>
+<td>GPT-3.5-turbo-0125 / GPT-4o-2024-05-13</td>
+<td>作为 MCTS 中各智能体（Explorer、Appraiser 等）的推理引擎</td>
+</tr>
+<tr>
+<td></td>
+<td>Temperature</td>
+<td><strong>0.3</strong></td>
+<td>控制 LLM 生成的随机性</td>
+</tr>
+<tr>
+<td></td>
+<td>最大 token 数</td>
+<td><strong>4096</strong></td>
+<td>上下文长度限制</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<blockquote>
+<p>✅ <strong>来源</strong>：主要来自论文 Section 4.1 “Experimental Setup” 与 Appendix B.3 “Implementation Details”，以及 Appendix C.1 对超参数影响的说明。</p>
+</blockquote>
+<h1>反思机制</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2d83e5e754c60e7f6389ac024736394cc2d6933ad9da789f363690b9a3f55515/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393231363931373738392d39346435346536352d373461362d343331382d623661302d6536316136636566373864652e706e67"><img src="https://camo.githubusercontent.com/2d83e5e754c60e7f6389ac024736394cc2d6933ad9da789f363690b9a3f55515/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313735393231363931373738392d39346435346536352d373461362d343331382d623661302d6536316136636566373864652e706e67" alt="图3：战术反思流程。该图示说明了子节点反思、兄弟节点反思和模拟反思如何在WebPilot中指导决策与探索。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1759216917789-94d54e65-74a6-4318-b6a0-e61a6cef78de.png" style="max-width: 100%;"></a></p>
+<h2><strong>1. Child Reflection (</strong><code class="notranslate">Rct</code><strong>) - 子节点反思</strong></h2>
+<ul>
+<li><strong>触发时机</strong>：在 <strong>RENE</strong> 阶段，当一个动作被执行并产生新状态后。</li>
+<li><strong>生成过程</strong>：Explorer 分析当前状态 <code class="notranslate">ot+1</code>，思考“下一步我应该做什么？”。</li>
+<li><strong>目的</strong>：为当前路径的<strong>下一个子节点</strong>提供方向性指引，确保思维链的连贯性。</li>
+<li><strong>工作原理</strong>：
+<ul>
+<li>如图所示，<code class="notranslate">Rct</code> 会成为<strong>下一个节点</strong>的 <code class="notranslate">Parent Reflection (Rpt)</code>。</li>
+<li>这保证了决策过程的连续性，让智能体不会忘记之前的思路。</li>
+</ul>
+</li>
+</ul>
+<h2><strong>2. Sibling Reflection (</strong><code class="notranslate">Rst</code><strong>) - 兄弟节点反思</strong></h2>
+<ul>
+<li><strong>触发时机</strong>：在 <strong>RENE</strong> 阶段，当某个动作被证明无效或偏离目标时。</li>
+<li><strong>生成过程</strong>：Explorer 识别到当前动作未能达到预期效果，并生成一条警告。</li>
+<li><strong>目的</strong>：警告<strong>同一层级的其他可能动作</strong>（即兄弟节点）避免重复同样的错误。</li>
+<li><strong>工作原理</strong>：
+<ul>
+<li>当 MCTS 尝试其他备选动作时，<code class="notranslate">Rst</code> 会被作为输入，告诉系统“不要走这条路”。</li>
+<li>这极大地提高了搜索效率，防止智能体陷入死循环。</li>
+</ul>
+</li>
+</ul>
+<h2><strong>3. Simulation Reflection (</strong><code class="notranslate">Rsim</code><strong>) - 模拟反思</strong></h2>
+<ul>
+<li><strong>触发时机</strong>：在 <strong>DES</strong> 阶段，进行一步前向模拟之后。</li>
+<li><strong>生成过程</strong>：Explorer 对新状态 <code class="notranslate">ot+1</code> 进行预测，思考“如果我现在执行下一步，会发生什么？”。</li>
+<li><strong>目的</strong>：评估当前状态的未来潜力，为节点打分提供依据。</li>
+<li><strong>工作原理</strong>：
+<ul>
+<li><code class="notranslate">Rsim</code> 是一次低成本的“思维实验”，不消耗任何真实资源。</li>
+<li>它帮助 Appraiser 计算 <code class="notranslate">Sfut(ot+1)</code>（未来潜力），从而影响该节点的 Q 值。</li>
+<li>如果模拟结果显示某条路径很有希望，系统就会优先探索它。</li>
+</ul>
+</li>
+</ul></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

@@ -1,5 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>QiakaChi's Note</title><link>https://qiakachi.github.io</link><description>迷茫之中，定有伦理。</description><copyright>QiakaChi's Note</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/98450248?v=4</url><title>avatar</title><link>https://qiakachi.github.io</link></image><lastBuildDate>Fri, 10 Oct 2025 02:24:55 +0000</lastBuildDate><managingEditor>QiakaChi's Note</managingEditor><ttl>60</ttl><webMaster>QiakaChi's Note</webMaster><item><title>[论文笔记] WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration</title><link>https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20WebPilot-%20A%20Versatile%20and%20Autonomous%20Multi-Agent%20System%20for%20Web%20Task%20Execution%20with%20Strategic%20Exploration.html</link><description># Overview
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>QiakaChi's Note</title><link>https://qiakachi.github.io</link><description>迷茫之中，定有伦理。</description><copyright>QiakaChi's Note</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/98450248?v=4</url><title>avatar</title><link>https://qiakachi.github.io</link></image><lastBuildDate>Wed, 22 Oct 2025 15:24:45 +0000</lastBuildDate><managingEditor>QiakaChi's Note</managingEditor><ttl>60</ttl><webMaster>QiakaChi's Note</webMaster><item><title>[笔记] 初探Transformer</title><link>https://qiakachi.github.io/post/%5B-bi-ji-%5D%20-chu-tan-Transformer.html</link><description>&gt; 参考
+&gt;
+&gt; 李沐：Transformer论文逐段精读【论文精读】[https://www.bilibili.com/video/BV1pu411o7BE/](https://www.bilibili.com/video/BV1pu411o7BE/)
+&gt;
+&gt; 李宏毅：&lt;font style='color:rgb(24, 25, 28);'&gt;台大李宏毅自注意力机制和Transformer详解 &lt;/font&gt;[https://www.bilibili.com/video/BV1v3411r78R/](https://www.bilibili.com/video/BV1v3411r78R/?spm_id_from=333.788.top_right_bar_window_custom_collection.content.click&amp;vd_source=0b90e25774e5586a51f60079f57d9588)
+&gt;
+&gt; 3Blue1Brown：&lt;font style='color:rgb(24, 25, 28);'&gt;直观解释注意力机制，Transformer的核心 &lt;/font&gt;[https://www.bilibili.com/video/BV1TZ421j7Ke/](https://www.bilibili.com/video/BV1TZ421j7Ke/)
+&gt;
+
+[transformer笔记.pptx](https://www.yuque.com/attachments/yuque/0/2025/pptx/39039688/1761116725830-b0bece44-99c5-4670-bcf4-1e1216dee1bc.pptx)
+
+---
+
+# 概览
+需要区分训练模式和推理（测试）模式，这可能是初学者容易混淆的地方。</description><guid isPermaLink="true">https://qiakachi.github.io/post/%5B-bi-ji-%5D%20-chu-tan-Transformer.html</guid><pubDate>Wed, 22 Oct 2025 15:24:09 +0000</pubDate></item><item><title>[论文笔记] WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration</title><link>https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20WebPilot-%20A%20Versatile%20and%20Autonomous%20Multi-Agent%20System%20for%20Web%20Task%20Execution%20with%20Strategic%20Exploration.html</link><description># Overview
 ![图1：WebPilot 概览。</description><guid isPermaLink="true">https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20WebPilot-%20A%20Versatile%20and%20Autonomous%20Multi-Agent%20System%20for%20Web%20Task%20Execution%20with%20Strategic%20Exploration.html</guid><pubDate>Fri, 10 Oct 2025 02:22:57 +0000</pubDate></item><item><title>[论文笔记] Agent Q Advanced Reasoning and Learning for Autonomous AI Agents (2)</title><link>https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20Agent%20Q%20Advanced%20Reasoning%20and%20Learning%20for%20Autonomous%20AI%20Agents%20%282%29.html</link><description>
 # 实验（推理阶段）
 ## 虚拟环境

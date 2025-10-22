@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="> 参考
+>
+> 李沐：Transformer论文逐段精读【论文精读】[https://www.bilibili.com/video/BV1pu411o7BE/](https://www.bilibili.com/video/BV1pu411o7BE/)
+>
+> 李宏毅：<font style='color:rgb(24, 25, 28);'>台大李宏毅自注意力机制和Transformer详解 </font>[https://www.bilibili.com/video/BV1v3411r78R/](https://www.bilibili.com/video/BV1v3411r78R/?spm_id_from=333.788.top_right_bar_window_custom_collection.content.click&vd_source=0b90e25774e5586a51f60079f57d9588)
+>
+> 3Blue1Brown：<font style='color:rgb(24, 25, 28);'>直观解释注意力机制，Transformer的核心 </font>[https://www.bilibili.com/video/BV1TZ421j7Ke/](https://www.bilibili.com/video/BV1TZ421j7Ke/)
+>
+
+[transformer笔记.pptx](https://www.yuque.com/attachments/yuque/0/2025/pptx/39039688/1761116725830-b0bece44-99c5-4670-bcf4-1e1216dee1bc.pptx)
+
+---
+
+# 概览
+需要区分训练模式和推理（测试）模式，这可能是初学者容易混淆的地方。">
+<meta property="og:title" content="[笔记] 初探Transformer">
+<meta property="og:description" content="> 参考
+>
+> 李沐：Transformer论文逐段精读【论文精读】[https://www.bilibili.com/video/BV1pu411o7BE/](https://www.bilibili.com/video/BV1pu411o7BE/)
+>
+> 李宏毅：<font style='color:rgb(24, 25, 28);'>台大李宏毅自注意力机制和Transformer详解 </font>[https://www.bilibili.com/video/BV1v3411r78R/](https://www.bilibili.com/video/BV1v3411r78R/?spm_id_from=333.788.top_right_bar_window_custom_collection.content.click&vd_source=0b90e25774e5586a51f60079f57d9588)
+>
+> 3Blue1Brown：<font style='color:rgb(24, 25, 28);'>直观解释注意力机制，Transformer的核心 </font>[https://www.bilibili.com/video/BV1TZ421j7Ke/](https://www.bilibili.com/video/BV1TZ421j7Ke/)
+>
+
+[transformer笔记.pptx](https://www.yuque.com/attachments/yuque/0/2025/pptx/39039688/1761116725830-b0bece44-99c5-4670-bcf4-1e1216dee1bc.pptx)
+
+---
+
+# 概览
+需要区分训练模式和推理（测试）模式，这可能是初学者容易混淆的地方。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-bi-ji-%5D%20-chu-tan-Transformer.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[笔记] 初探Transformer</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[笔记] 初探Transformer</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/8" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><blockquote>
+<p>参考</p>
+<p>李沐：Transformer论文逐段精读【论文精读】<a href="https://www.bilibili.com/video/BV1pu411o7BE/" rel="nofollow">https://www.bilibili.com/video/BV1pu411o7BE/</a></p>
+<p>李宏毅：台大李宏毅自注意力机制和Transformer详解 <a href="https://www.bilibili.com/video/BV1v3411r78R/?spm_id_from=333.788.top_right_bar_window_custom_collection.content.click&amp;vd_source=0b90e25774e5586a51f60079f57d9588" rel="nofollow">https://www.bilibili.com/video/BV1v3411r78R/</a></p>
+<p>3Blue1Brown：直观解释注意力机制，Transformer的核心 <a href="https://www.bilibili.com/video/BV1TZ421j7Ke/" rel="nofollow">https://www.bilibili.com/video/BV1TZ421j7Ke/</a></p>
+</blockquote>
+<p><a href="https://www.yuque.com/attachments/yuque/0/2025/pptx/39039688/1761116725830-b0bece44-99c5-4670-bcf4-1e1216dee1bc.pptx" rel="nofollow">transformer笔记.pptx</a></p>
+<hr>
+<h1>概览</h1>
+<p>需要区分训练模式和推理（测试）模式，这可能是初学者容易混淆的地方。</p>
+<h2>训练模式</h2>
+<p>Teacher Forcing：模型采用真正的目标序列作为解码器输入，以便学习目标的条件分布。加速了训练收敛，并避免错误传播。</p>
+<p>具体步骤：</p>
+<p>1）解码器输入： 解码器在每个时间步使用目标序列的前一个token作为当前时间步的输入；</p>
+<p>2）掩码机制： 使用masking确保每个时间步只能看到之前的token，而不能看到未来的token。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>组件</th>
+<th>类型</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Encoder</td>
+<td>Teacher Forcing</td>
+<td>源序列经过词嵌入 + 位置编码</td>
+<td>上下文向量 <code class="notranslate">Enc_output</code></td>
+</tr>
+<tr>
+<td>Decoder</td>
+<td>Autoregressive</td>
+<td>右移一位的目标序列</td>
+<td>对目标序列中每个位置的预测</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>推理模式</h2>
+<p>Autoregressive：在实际生成文本时，解码器基于已生成的token来逐步生成下一个token。解码器在每一步生成下一个token，然后将生成的token反馈到解码器的下一个时间步。</p>
+<p>具体步骤：</p>
+<p>1）初始输入： 解码器首先输入一个BEGIN token；</p>
+<p>2）逐步生成： 在每个时间步生成一个token，并将这个token作为输入反馈到解码器的下一个时间步，一直到生成END token或达到最大长度。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>组件</th>
+<th>输入</th>
+<th>输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Encoder（推理时只执行一次）</td>
+<td>源序列</td>
+<td>上下文向量 <code class="notranslate">Enc_output</code></td>
+</tr>
+<tr>
+<td>Decoder（Autoregressive）</td>
+<td>起始符 <code class="notranslate">&lt;BOS&gt;</code></td>
+<td>预测第一个 token</td>
+</tr>
+<tr>
+<td>Decoder（后续步骤）</td>
+<td>上一步预测的 token 拼接到当前输入序列</td>
+<td>预测下一个 token</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/15887cf7b5e31a568fd2546fb5afd12b88a8129864cfa112a93429e05ec1a163/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383535303930322d33643031313364362d613535392d346639382d613366652d3930656532616130636235652e706e67"><img src="https://camo.githubusercontent.com/15887cf7b5e31a568fd2546fb5afd12b88a8129864cfa112a93429e05ec1a163/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383535303930322d33643031313364362d613535392d346639382d613366652d3930656532616130636235652e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761098550902-3d0113d6-a559-4f98-a3fe-90ee2aa0cb5e.png" style="max-width: 100%;"></a></p>
+<h1>具体架构</h1>
+<p>本节将介绍Transformer的核心组成部分：编码器（Encoder）、解码器（Decoder）、注意力机制（Attention）、位置感知前馈神经网络、Embeddings and Softmax以及Positional Encoding。</p>
+<h2>Encoder</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0934269de522a9cc80bc9e0d402fa71f16fcbcd0e8cdae08738ab815b1e6eae3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383831383132322d38366462383831302d323837302d343134652d396536352d6133373536343735386230662e706e67"><img src="https://camo.githubusercontent.com/0934269de522a9cc80bc9e0d402fa71f16fcbcd0e8cdae08738ab815b1e6eae3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383831383132322d38366462383831302d323837302d343134652d396536352d6133373536343735386230662e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761098818122-86db8810-2870-414e-9e65-a37564758b0f.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>
+<p>论文中，设置6层Layer。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/25f90273d0a66b14f068c31de90e71c0f8b70a346df4cf62c211d5297bef6085/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383833363033312d64333436313366652d626564302d343636662d616562362d6338306437373462656536612e706e67"><img src="https://camo.githubusercontent.com/25f90273d0a66b14f068c31de90e71c0f8b70a346df4cf62c211d5297bef6085/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383833363033312d64333436313366652d626564302d343636662d616562362d6338306437373462656536612e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761098836031-d34613fe-bed0-466f-aeb6-c80d774bee6a.png" style="max-width: 100%;"></a></p>
+</li>
+<li>
+<p>残差连接：每个sub-layer使用LayerNorm(x+Sublayer(x))</p>
+<ul>
+<li>不是BatchNorm。</li>
+<li>BatchNorm会受到全局影响，而LayerNorm只考虑自身，不受全局影响。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a30b1ce12ea16fa1900c5e9da40a87467217359e059a0288dcf5e89a202ad456/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393032383436382d61653233303562642d356631662d343239652d626639362d3930643834303238313230382e706e67"><img src="https://camo.githubusercontent.com/a30b1ce12ea16fa1900c5e9da40a87467217359e059a0288dcf5e89a202ad456/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393032383436382d61653233303562642d356631662d343239652d626639362d3930643834303238313230382e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761099028468-ae2305bd-5f1f-429e-bf96-90d840281208.png" style="max-width: 100%;"></a></p>
+</li>
+<li>
+<p>每层的维度为512。</p>
+<ul>
+<li>与维度下采样 + 通道数上升的CNN/MLP不同，这里Transformer各层维度是固定的。</li>
+</ul>
+</li>
+<li>
+<p>Multi-Head Attention：见3.2节。</p>
+</li>
+</ul>
+<h2>Decoder</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a10c8c29c93e1cff308eab049491218a628e6dfcb2edc5391f86690533acded0/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383835363139342d30383464326538322d633566322d346263362d613630662d3430653363383464643034382e706e67"><img src="https://camo.githubusercontent.com/a10c8c29c93e1cff308eab049491218a628e6dfcb2edc5391f86690533acded0/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039383835363139342d30383464326538322d633566322d346263362d613630662d3430653363383464643034382e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761098856194-084d2e82-c5f2-4bc6-a60f-40e3c84dd048.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>
+<p>论文中设置6层Layer。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9026bae65553d372387de344d66b0c10134dc9fdeb00bced7a16ae29a46474f4/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393131313536352d66366136653530332d313339392d346539342d616234352d3865633033316232313534382e706e67"><img src="https://camo.githubusercontent.com/9026bae65553d372387de344d66b0c10134dc9fdeb00bced7a16ae29a46474f4/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393131313536352d66366136653530332d313339392d346539342d616234352d3865633033316232313534382e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761099111565-f6a6e503-1399-4e94-ab45-8ec031b21548.png" style="max-width: 100%;"></a></p>
+</li>
+<li>
+<p><strong>Masked</strong> Multi-Head Attention：见3.2节。</p>
+</li>
+<li>
+<p>Multi-Head <strong>Cross</strong> Attention：见3.2节。</p>
+</li>
+</ul>
+<h2>Attention</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e53264c9defd4244349c9d482734c37bc4a59a7cdf780d4ea3b76a2945d892cc/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393238323238392d31383665663362312d376534632d343962622d623163382d3062646139313363363561652e706e67"><img src="https://camo.githubusercontent.com/e53264c9defd4244349c9d482734c37bc4a59a7cdf780d4ea3b76a2945d892cc/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313039393238323238392d31383665663362312d376534632d343962622d623163382d3062646139313363363561652e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761099282289-186ef3b1-7e4c-49bb-b1c8-0bda913c65ae.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>输出维度和value维度相同。</li>
+<li>Compatibility function：两个词向量相似度计算
+<ul>
+<li>相似度计算有不同的方法，本论文选择了query和key的点积（Dot Product），也有其他方法如Additive Attention。</li>
+</ul>
+</li>
+</ul>
+<h3>Scaled Dot-Product Attention</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1705d21dff64409f62ce11223529656d7aebd163e9e4c6083786c3281628c153/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313439373736362d62646465636539382d333732652d343330382d383065612d6461393761306130316339382e706e67"><img src="https://camo.githubusercontent.com/1705d21dff64409f62ce11223529656d7aebd163e9e4c6083786c3281628c153/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313439373736362d62646465636539382d333732652d343330382d383065612d6461393761306130316339382e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761101497766-bddece98-372e-4308-80ea-da97a0a01c98.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>Query和key在这里数量可以不一致，但是是等长的。
+<ul>
+<li>也可以不等长，有其他办法（additive attention）计算。</li>
+</ul>
+</li>
+<li>Query和all keys做点积。
+<ul>
+<li>向量点积（cos），越大表示相似度越高。</li>
+</ul>
+</li>
+<li>Scaled的<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f6fa5a9ad729637aca204ea4814ff66561ac7803e6969eba1dd674634d07a57e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313433313433362d31396534316461312d373836322d343035612d393563612d3539613238316531656131622e706e67"><img src="https://camo.githubusercontent.com/f6fa5a9ad729637aca204ea4814ff66561ac7803e6969eba1dd674634d07a57e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313433313433362d31396534316461312d373836322d343035612d393563612d3539613238316531656131622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761101431436-19e41da1-7862-405a-95ca-59a281e1ea1b.png" style="max-width: 100%;"></a>
+<ul>
+<li>当dk很大时，点积可能过大，导致梯度很小，跑不动。</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ab1e5829bdc7d1119664bca8cb4cbe09a5daa8dba5bbd1f0618944acf6ebfc52/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313632313235372d64303865353166612d336631342d343962332d386465332d3463663863346438633836392e706e67"><img src="https://camo.githubusercontent.com/ab1e5829bdc7d1119664bca8cb4cbe09a5daa8dba5bbd1f0618944acf6ebfc52/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130313632313235372d64303865353166612d336631342d343962332d386465332d3463663863346438633836392e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761101621257-d08e51fa-3f14-49b3-8de3-4cf8c4d8c869.png" style="max-width: 100%;"></a></p>
+<h3>Masked Attention</h3>
+<ul>
+<li>让模型只能使用历史信息进行预测而不能看到未来信息，即不能让后词影响前词。</li>
+<li>训练时，在t时刻不可看t+1, t+2…之后时刻的输入，因此需要把之后的key-value上mask（设置为趋近负无穷的负数，使得softmax后为0）。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ae66801efd3ad1fb9e44a9ee4032b1b03426b0d545724dc1ed3c90284d42c02a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333830383839302d34643938613836362d386238362d346131332d613065642d3966336462383530623935622e706e67"><img src="https://camo.githubusercontent.com/ae66801efd3ad1fb9e44a9ee4032b1b03426b0d545724dc1ed3c90284d42c02a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333830383839302d34643938613836362d386238362d346131332d613065642d3966336462383530623935622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761103808890-4d98a866-8b86-4a13-a0ed-9f3db850b95b.png" style="max-width: 100%;"></a></p>
+<h3>Cross Attention</h3>
+<ul>
+<li>Decoder经过mask attention后得到的query，和Encoder的all key-value pairs进行计算，得到attention。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/289365a8d8d387092fe6cc77186bd43c4641f7dfee64cc3c1d81902f1dbed0c5/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343930373435302d34323466646466642d636634622d343439662d613937352d3931396264343864636636632e706e67"><img src="https://camo.githubusercontent.com/289365a8d8d387092fe6cc77186bd43c4641f7dfee64cc3c1d81902f1dbed0c5/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343930373435302d34323466646466642d636634622d343439662d613937352d3931396264343864636636632e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761104907450-424fddfd-cf4b-449f-a975-919bd48dcf6c.png" style="max-width: 100%;"></a></p>
+<h3>Multi-Head Attention</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/800ba8b970e04ce61d6e4d73553810db4362e2fcce260bf966988964575f1b47/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333132323935342d35373439323731362d376666372d343462322d613161652d6139383232666535383564622e706e67"><img src="https://camo.githubusercontent.com/800ba8b970e04ce61d6e4d73553810db4362e2fcce260bf966988964575f1b47/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333132323935342d35373439323731362d376666372d343462322d613161652d6139383232666535383564622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761103122954-57492716-7ff7-44b2-a1ae-a9822fe585db.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>
+<p>过程</p>
+<ul>
+<li>Linear：原始的V, K, Q进入线性层后被投影到比较低的维度。</li>
+<li>点积：做h次如左图的点积注意力机制，得到h个向量并合并在一起。</li>
+<li>Linear：线性投影回去。</li>
+</ul>
+</li>
+<li>
+<p>公式</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b3f385e93582d2fdddbaa32ae2587dd8cd617301b33fc4d26e73efe3e1054924/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333134363236342d34366261653534642d356565652d346564322d383831372d3434363164633561636334642e706e67"><img src="https://camo.githubusercontent.com/b3f385e93582d2fdddbaa32ae2587dd8cd617301b33fc4d26e73efe3e1054924/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333134363236342d34366261653534642d356565652d346564322d383831372d3434363164633561636334642e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761103146264-46bae54d-5eee-4ed2-8817-4461dc5acc4d.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>原始输入Q, K, V投影到低维计算Attention得到不同的head （线性层的参数W，可学习） ，不同的head经过Concat后再做投影。</li>
+</ul>
+</li>
+<li>
+<p>论文这里使用了8个head。</p>
+</li>
+<li>
+<p>由于有残差连接，所以输入和输出的维度相同，所以投影维度为512/8=64。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/62bf6cf618bb8e42b46489d5ecea426b98097fbd8509e66c43ab4227f0682963/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333034393435342d37323065623237312d333235622d346533302d613261652d6132653939306632343965392e706e67"><img src="https://camo.githubusercontent.com/62bf6cf618bb8e42b46489d5ecea426b98097fbd8509e66c43ab4227f0682963/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333034393435342d37323065623237312d333235622d346533302d613261652d6132653939306632343965392e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761103049454-720eb271-325b-4e30-a2ae-a2e990f249e9.png" style="max-width: 100%;"></a></p>
+<h3>总结</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3644e101c6ef889a398db78183e576d2477bacc880b04187e51e76b615aa3217/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333837313239302d36343638316464322d373838342d346539332d386435372d3966396563393831373536612e706e67"><img src="https://camo.githubusercontent.com/3644e101c6ef889a398db78183e576d2477bacc880b04187e51e76b615aa3217/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130333837313239302d36343638316464322d373838342d346539332d386435372d3966396563393831373536612e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761103871290-64681dd2-7884-4e93-8d57-9f9ec981756a.png" style="max-width: 100%;"></a></p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Attention应用</th>
+<th>解释</th>
+<th>图片</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编码器的Multi-Head Attention</td>
+<td>K, V, Q都源自原始输入本身（Self）；<br>权重来源与本身与各向量之间的相似度；<br>Multi-Head下，学习h个不同的距离空间。</td>
+<td><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e904da2bae79e1eeaecdfb101d5e772614b3f1915680ed3f3ab45ccbee3371b3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343131303335322d36386562666534382d323838662d343730322d396533612d3537626639363835356136622e706e67"><img src="https://camo.githubusercontent.com/e904da2bae79e1eeaecdfb101d5e772614b3f1915680ed3f3ab45ccbee3371b3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343131303335322d36386562666534382d323838662d343730322d396533612d3537626639363835356136622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761104110352-68ebfe48-288f-4702-9e3a-57bf96855a6b.png" style="max-width: 100%;"></a></td>
+</tr>
+<tr>
+<td>解码器的Masked Attention</td>
+<td>和上面不同之处在于，后面的向量的权要设为0。</td>
+<td><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e63665fa5251e8388273bc21fba31bb47a3ba584aaa8d540800e99bbe408ef56/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343232383835362d33323865636339622d346164392d343439642d626162652d6463346238313033373866612e706e67"><img src="https://camo.githubusercontent.com/e63665fa5251e8388273bc21fba31bb47a3ba584aaa8d540800e99bbe408ef56/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343232383835362d33323865636339622d346164392d343439642d626162652d6463346238313033373866612e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761104228856-328ecc9b-4ad9-449d-babe-dc4b810378fa.png" style="max-width: 100%;"></a></td>
+</tr>
+<tr>
+<td>解码器的Cross Attention</td>
+<td>K, V来自于编码器的输出，Q来自于解码器Masked Attention的输出。<br>eg.编码器输出'Hello', ‘world'的向量，解码器输入了'你', '好', ‘世', ‘界'的向量，那么'好'的query查询'Hello'的key-value对，相似度较高；查询'world'的相似度较低。</td>
+<td><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9ad4f850fbac868cba0774d32a3c3a35911a93ec499a084993df81857d86a50d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343231353439332d33393664313464352d306336642d343634302d623637352d3033663565396136643038332e706e67"><img src="https://camo.githubusercontent.com/9ad4f850fbac868cba0774d32a3c3a35911a93ec499a084993df81857d86a50d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343231353439332d33393664313464352d306336642d343634302d623637352d3033663565396136643038332e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761104215493-396d14d5-0c6d-4640-b675-03f5e9a6d083.png" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>位置感知前馈神经网络</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/520783d7d8488ef6e1e3fbc35d9206a0bbb44cdc2f25805609a61d214eb3a2e2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343330323036322d38653461316232622d336264632d346565612d386336622d3566653065356436333038652e706e67"><img src="https://camo.githubusercontent.com/520783d7d8488ef6e1e3fbc35d9206a0bbb44cdc2f25805609a61d214eb3a2e2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130343330323036322d38653461316232622d336264632d346565612d386336622d3566653065356436333038652e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761104302062-8e4a1b2b-3bdc-4eea-8c6b-5fe0e5d6308e.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>Position-wise：前馈网络对每个时间步（token 位置）的向量独立地进行相同的非线性变换。</li>
+<li>线性层/MLP公式：语义空间的转换
+<ul>
+<li>max(0, W1 x+b1)：ReLU激活层；</li>
+<li>W1把x从512维度扩大到2048（4倍）；</li>
+<li>但由于残差连接输入输出维度相同，所以又用W2把维度投回512。</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/00ce4c0d485565dbc44de3d0dccfc6e4838b24506236cfe4e95e713fcc77e1bf/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353336373036382d33366361616465662d316362622d346665652d386132312d6265323065623734663062342e706e67"><img src="https://camo.githubusercontent.com/00ce4c0d485565dbc44de3d0dccfc6e4838b24506236cfe4e95e713fcc77e1bf/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353336373036382d33366361616465662d316362622d346665652d386132312d6265323065623734663062342e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761105367068-36caadef-1cbb-4fee-8a21-be20eb74f0b4.png" style="max-width: 100%;"></a></li>
+</ul>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>模型类型</th>
+<th>信息流方向</th>
+<th>是否共享时间步信息</th>
+<th>能否并行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNN (Recurrent Neural Network)</td>
+<td>串行 (time-step by time-step)</td>
+<td>✅ 是，每个时刻依赖上一个隐藏状态 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c94a890d62f6ca0df2e284e856db633a2e8ddf84ab1d83a4e02d5c66b1004508/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f66653865666566303666323164623538306637376336663935626463666463392e737667"><img src="https://camo.githubusercontent.com/c94a890d62f6ca0df2e284e856db633a2e8ddf84ab1d83a4e02d5c66b1004508/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f66653865666566303666323164623538306637376336663935626463666463392e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/fe8efef06f21db580f77c6f95bdcfdc9.svg" style="max-width: 100%;"></a></td>
+<td>❌ 否（必须顺序计算）</td>
+</tr>
+<tr>
+<td>Transformer + Position-wise FFN</td>
+<td>并行（所有位置同时）</td>
+<td>❌ 否，FFN 对每个位置独立</td>
+<td>✅ 是（所有位置一起算）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>Embeddings and Softmax</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9443e9f560f60ff1a1d386512f82df24bffbb2e1c78a165abeb3af35a554e275/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353830333434352d61666333383035612d633933662d343665612d616136612d3330616231393530366265382e706e67"><img src="https://camo.githubusercontent.com/9443e9f560f60ff1a1d386512f82df24bffbb2e1c78a165abeb3af35a554e275/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353830333434352d61666333383035612d633933662d343665612d616136612d3330616231393530366265382e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761105803445-afc3805a-c93f-46ea-aa6a-30ab19506be8.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>转换权重乘根号d（d=512）
+<ul>
+<li>学embedding时，会把向量的l2norm学得较少，所以需要乘此，使得和Positional Encoding相加时scale上差不多。</li>
+</ul>
+</li>
+</ul>
+<h2>Positional Encoding</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/390ff67056dcdacc78e78416198c911f305ce01131046feb5dda07a9379254e0/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353833303535392d30333739303334302d356234322d346335372d613436632d3332643334316439306432622e706e67"><img src="https://camo.githubusercontent.com/390ff67056dcdacc78e78416198c911f305ce01131046feb5dda07a9379254e0/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313130353833303535392d30333739303334302d356234322d346335372d613436632d3332643334316439306432622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761105830559-03790340-5b42-4c57-a46c-32d341d90d2b.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>
+<p>加入时序信息</p>
+<ul>
+<li>RNN：上一个输出是下一个输入，本身就是时序的。</li>
+<li>Attention：本身没有时序信息，因此要在输入里额外加入。</li>
+</ul>
+</li>
+<li>
+<p>如何加入</p>
+<ul>
+<li>
+<p>思想可类比计算机表示数字：假设用一个32位的整数表示数字的话，相当于用32个bit（每个bit有不同的值表示数字）。可以认为一个数是用长为32的一个向量表示。</p>
+</li>
+<li>
+<p>回到模型，最终的输入由位置编号和embedding相加，但是embedding是长为512的向量，因此位置编号不可以只是1,2,3…的整数，所以需要将位置编号的整数展开成长为512的向量。由于一个数可以用不同周期的sin和cos表示为一个长为512的向量，所以只要将位置编号如此展开，即可相加。</p>
+</li>
+<li>
+<p>eg 假设d=8, pos=2（即第2个token），则每维的PE值如下：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9e762b22707e40c36c4412ab00fe715b1b166190a79b9b8aadb564d811aec2f1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131353833393234302d64653538353763612d386333662d343932612d383731392d3335393233663034396664392e706e67"><img src="https://camo.githubusercontent.com/9e762b22707e40c36c4412ab00fe715b1b166190a79b9b8aadb564d811aec2f1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131353833393234302d64653538353763612d386333662d343932612d383731392d3335393233663034396664392e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761115839240-de5857ca-8c3f-492a-8719-35923f049fd9.png" style="max-width: 100%;"></a></p>
+<p>最终得到 PE(pos=2)=[0.9093,−0.4161,0.1987,0.9801,0.0200,0.9998,0.0020,0.999998]</p>
+</li>
+</ul>
+</li>
+<li>
+<p>与Mask的关系： Positional Encoding 已经告诉模型token的先后顺序，为什么还需要 mask 来防止看到后面的词？</p>
+<ul>
+<li>Positional Encoding 的作用：告诉模型位置顺序，但Attention仍然可以访问全部词的信息。</li>
+<li>Masked Attention 的作用：强制因果性，阻止模型用后面的信息预测前面的词。</li>
+</ul>
+</li>
+</ul>
+<h1>实验</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3192c8c658de47f8261bc68587bac011510ba847c5e6b29c2064289ef3146db7/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131363033343032312d34633261306537652d396634332d343333632d623632302d6135353233613336343732312e706e67"><img src="https://camo.githubusercontent.com/3192c8c658de47f8261bc68587bac011510ba847c5e6b29c2064289ef3146db7/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131363033343032312d34633261306537652d396634332d343333632d623632302d6135353233613336343732312e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761116034021-4c2a0e7e-9f43-433c-b620-a5523a364721.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>Byte-pair encoding(BPE)
+<ul>
+<li>可以提取词根，可以让字典变得比较小。</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4d2320aabf850cd1fd3cb5230b58033ca16a04257cbe9d6f279b79162313e077/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131363238363232352d33643862303565382d656132332d343238392d386563382d3636376239363337616438312e706e67"><img src="https://camo.githubusercontent.com/4d2320aabf850cd1fd3cb5230b58033ca16a04257cbe9d6f279b79162313e077/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736313131363238363232352d33643862303565382d656132332d343238392d386563382d3636376239363337616438312e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1761116286225-3d8b05e8-ea23-4289-8ec8-667b9637ad81.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>Warmup
+<ul>
+<li>一开始学习率非常小，慢慢升上去，当模型稳定后再逐步衰减。</li>
+</ul>
+</li>
+</ul></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## **DP 状态转移方程**
+设 ![image](https://cdn.nlark.com/yuque/__latex/d9ae4bc0ba9f7c56540f3aaecf525c0e.svg) 表示考虑前 ![image](https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg) 个物品，当前背包剩余容量为 ![image](https://cdn.nlark.com/yuque/__latex/b891664b42113aee13f0bac25eb998e5.svg) 时，所能获得的最大价值；![image](https://cdn.nlark.com/yuque/__latex/d99fd2df7b5f652a4b7fc593fb9df750.svg) 和 ![image](https://cdn.nlark.com/yuque/__latex/0480d9f663a9cd686bae9ee284ce1bbb.svg) 分别为第 ![image](https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg) 个物品的重量和价值。">
+<meta property="og:title" content="[笔记] 0-1背包问题的 DP 状态转移方程与 Bellman 方程转换">
+<meta property="og:description" content="## **DP 状态转移方程**
+设 ![image](https://cdn.nlark.com/yuque/__latex/d9ae4bc0ba9f7c56540f3aaecf525c0e.svg) 表示考虑前 ![image](https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg) 个物品，当前背包剩余容量为 ![image](https://cdn.nlark.com/yuque/__latex/b891664b42113aee13f0bac25eb998e5.svg) 时，所能获得的最大价值；![image](https://cdn.nlark.com/yuque/__latex/d99fd2df7b5f652a4b7fc593fb9df750.svg) 和 ![image](https://cdn.nlark.com/yuque/__latex/0480d9f663a9cd686bae9ee284ce1bbb.svg) 分别为第 ![image](https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg) 个物品的重量和价值。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-bi-ji-%5D%200-1-bei-bao-wen-ti-de-%20DP%20-zhuang-tai-zhuan-yi-fang-cheng-yu-%20Bellman%20-fang-cheng-zhuan-huan.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[笔记] 0-1背包问题的 DP 状态转移方程与 Bellman 方程转换</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[笔记] 0-1背包问题的 DP 状态转移方程与 Bellman 方程转换</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/9" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2><strong>DP 状态转移方程</strong></h2>
+<p>设 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d638c2975e15f96ab3135baa874bd72d9f61d27717ed9681c54eb9654451a611/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64396165346263306261396637633536353430663361616563663532356330652e737667"><img src="https://camo.githubusercontent.com/d638c2975e15f96ab3135baa874bd72d9f61d27717ed9681c54eb9654451a611/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64396165346263306261396637633536353430663361616563663532356330652e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/d9ae4bc0ba9f7c56540f3aaecf525c0e.svg" style="max-width: 100%;"></a> 表示考虑前 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2967626a4f3e6570efd2a47a69b1fdea2b9b8487700a436ff5d90175ba5495a1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32343433666263666562376538356531643632623666356534663237323037652e737667"><img src="https://camo.githubusercontent.com/2967626a4f3e6570efd2a47a69b1fdea2b9b8487700a436ff5d90175ba5495a1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32343433666263666562376538356531643632623666356534663237323037652e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg" style="max-width: 100%;"></a> 个物品，当前背包剩余容量为 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9c6d131eac75764bff0a70812bfc527f0b5ac96251f29e2fb0884ecb6129ed10/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f62383931363634623432313133616565313366306261633235656239393865352e737667"><img src="https://camo.githubusercontent.com/9c6d131eac75764bff0a70812bfc527f0b5ac96251f29e2fb0884ecb6129ed10/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f62383931363634623432313133616565313366306261633235656239393865352e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/b891664b42113aee13f0bac25eb998e5.svg" style="max-width: 100%;"></a> 时，所能获得的最大价值；<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2360565deada1f947cb9e1e510d36bb6db0b00be58b04e0adf423ee210a8a714/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64393966643264663762356636353261346237666335393366623964663735302e737667"><img src="https://camo.githubusercontent.com/2360565deada1f947cb9e1e510d36bb6db0b00be58b04e0adf423ee210a8a714/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64393966643264663762356636353261346237666335393366623964663735302e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/d99fd2df7b5f652a4b7fc593fb9df750.svg" style="max-width: 100%;"></a> 和 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f7c3aad65072aef8b0ca33c1c87522e73b77abba8b7decd3a6dfc1a2233c6ff9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f30343830643966363633613963643638366261653965653238346365316262622e737667"><img src="https://camo.githubusercontent.com/f7c3aad65072aef8b0ca33c1c87522e73b77abba8b7decd3a6dfc1a2233c6ff9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f30343830643966363633613963643638366261653965653238346365316262622e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/0480d9f663a9cd686bae9ee284ce1bbb.svg" style="max-width: 100%;"></a> 分别为第 <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2967626a4f3e6570efd2a47a69b1fdea2b9b8487700a436ff5d90175ba5495a1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32343433666263666562376538356531643632623666356534663237323037652e737667"><img src="https://camo.githubusercontent.com/2967626a4f3e6570efd2a47a69b1fdea2b9b8487700a436ff5d90175ba5495a1/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32343433666263666562376538356531643632623666356534663237323037652e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/2443fbcfeb7e85e1d62b6f5e4f27207e.svg" style="max-width: 100%;"></a> 个物品的重量和价值。</p>
+<p>则状态转移方程为：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fc3f37266afe952eee159d8998deb9765c22685eb4306fff923a26f002534a60/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f35363961646264653061373563646539346239363237313230373234396435302e737667"><img src="https://camo.githubusercontent.com/fc3f37266afe952eee159d8998deb9765c22685eb4306fff923a26f002534a60/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f35363961646264653061373563646539346239363237313230373234396435302e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/569adbde0a75cde94b96271207249d50.svg" style="max-width: 100%;"></a></p>
+<h2><strong>对应术语</strong></h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left"><strong>DP术语</strong></th>
+<th align="left"><strong>对应RL术语</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">状态</td>
+<td align="left"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0dd83f7ec6811698b3a802cf721f71725b5a96225e9a79c5055875a9fca36700/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f31666563643730626661646333376238656466653363383138383439333630302e737667"><img src="https://camo.githubusercontent.com/0dd83f7ec6811698b3a802cf721f71725b5a96225e9a79c5055875a9fca36700/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f31666563643730626661646333376238656466653363383138383439333630302e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/1fecd70bfadc37b8edfe3c8188493600.svg" style="max-width: 100%;"></a>，即“考虑第 i 个物品，剩余容量 c”</td>
+</tr>
+<tr>
+<td align="left">动作</td>
+<td align="left"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/69a719d39d135a972fe4a017591c90b69222d6631ededf2386adcd86919f1f4f/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f37323135303235346134346365636561356137303635303738616562623835332e737667"><img src="https://camo.githubusercontent.com/69a719d39d135a972fe4a017591c90b69222d6631ededf2386adcd86919f1f4f/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f37323135303235346134346365636561356137303635303738616562623835332e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/72150254a44cecea5a7065078aebb853.svg" style="max-width: 100%;"></a>：是否选第 i 个物品</td>
+</tr>
+<tr>
+<td align="left">奖励</td>
+<td align="left"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/745cc97c4e6ba2fc83c6fd83fd4c2c144e899276f78b195fced916d03f31c9f2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f37343935313862393032376162326462316538613966376530613665633633392e737667"><img src="https://camo.githubusercontent.com/745cc97c4e6ba2fc83c6fd83fd4c2c144e899276f78b195fced916d03f31c9f2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f37343935313862393032376162326462316538613966376530613665633633392e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/749518b9027ab2db1e8a9f7e0a6ec639.svg" style="max-width: 100%;"></a></td>
+</tr>
+<tr>
+<td align="left">状态转移</td>
+<td align="left"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/65c2dc179e14e858f8314c686e36aa71486b52a32e78cd1c338ae546420c892a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64313132613239383631323732646339623962653262623930323932383030392e737667"><img src="https://camo.githubusercontent.com/65c2dc179e14e858f8314c686e36aa71486b52a32e78cd1c338ae546420c892a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f64313132613239383631323732646339623962653262623930323932383030392e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/d112a29861272dc9b9be2bb902928009.svg" style="max-width: 100%;"></a></td>
+</tr>
+<tr>
+<td align="left">（状态）价值函数</td>
+<td align="left"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0edb2656971b1e1d9d72c00cc636309c31662c75a7748ce15872e3ed56d3f134/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f38643630626566323765656235313462313730613334316235333562646536622e737667"><img src="https://camo.githubusercontent.com/0edb2656971b1e1d9d72c00cc636309c31662c75a7748ce15872e3ed56d3f134/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f38643630626566323765656235313462313730613334316235333562646536622e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/8d60bef27eeb514b170a341b535bde6b.svg" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2><strong>从 DP 状态转移方程到 Bellman 方程</strong></h2>
+<ol>
+<li>DP 状态转移方程</li>
+</ol>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/87c69c5748d3fa6121ccb86faf899297747887cf5a601ecc104a1b182917abf6/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f35343066386336663366336539653564646535343632323464333263376539612e737667"><img src="https://camo.githubusercontent.com/87c69c5748d3fa6121ccb86faf899297747887cf5a601ecc104a1b182917abf6/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f35343066386336663366336539653564646535343632323464333263376539612e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/540f8c6f3f3e9e5dde546224d32c7e9a.svg" style="max-width: 100%;"></a></p>
+<ol start="2">
+<li>代换为 RL 术语</li>
+</ol>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8acb19641537c27ab16916c42e1e735194e5a750141451941b9003840252413e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32623331353431663635326564326536343630343463333661613264643833632e737667"><img src="https://camo.githubusercontent.com/8acb19641537c27ab16916c42e1e735194e5a750141451941b9003840252413e/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f32623331353431663635326564326536343630343463333661613264643833632e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/2b31541f652ed2e646044c36aa2dd83c.svg" style="max-width: 100%;"></a></p>
+<p>进一步整理得：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fe98ff319f6a530a5a2f9254a89d72e74602369acd797c619b12f814ab11a0eb/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f66326366353166326630646139656336326532313263366634636335656338312e737667"><img src="https://camo.githubusercontent.com/fe98ff319f6a530a5a2f9254a89d72e74602369acd797c619b12f814ab11a0eb/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f66326366353166326630646139656336326532313263366634636335656338312e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/f2cf51f2f0da9ec62e212c6f4cc5ec81.svg" style="max-width: 100%;"></a></p>
+<p>这与 Bellman 方程的形式相同（<a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6c7d1f7ad36c2e445ff165ef47d985f2f99b2401fc4f7f625dd29cfd494c7457/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f61366335623361393231386639356535353033343939363534636639623038662e737667"><img src="https://camo.githubusercontent.com/6c7d1f7ad36c2e445ff165ef47d985f2f99b2401fc4f7f625dd29cfd494c7457/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f61366335623361393231386639356535353033343939363534636639623038662e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/a6c5b3a9218f95e5503499654cf9b08f.svg" style="max-width: 100%;"></a>）：</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/92cbdba40ed433b6c5c78195a2044c09d9ec180893a60aa96de4e1b9a3f00656/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f61373433636463653531643031633535623066326663356234626130613633352e737667"><img src="https://camo.githubusercontent.com/92cbdba40ed433b6c5c78195a2044c09d9ec180893a60aa96de4e1b9a3f00656/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f5f5f6c617465782f61373433636463653531643031633535623066326663356234626130613633352e737667" alt="image" data-canonical-src="https://cdn.nlark.com/yuque/__latex/a743cdce51d01c55b0f2fc5b4ba0a635.svg" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="[https://www.arxiv.org/abs/2510.06727](https://www.arxiv.org/abs/2510.06727)
+
+> 参考：[https://www.longshidata.com/blog/c/c2025103111.html](https://www.longshidata.com/blog/c/c2025103111.html)
+
+现有问题
+
++ LLM 在处理长周期、多轮任务时面临着根本性的可扩展性瓶颈。">
+<meta property="og:title" content="[论文笔记] Scaling LLM Multi-turn RL with End-to-end Summarization-based Context Management">
+<meta property="og:description" content="[https://www.arxiv.org/abs/2510.06727](https://www.arxiv.org/abs/2510.06727)
+
+> 参考：[https://www.longshidata.com/blog/c/c2025103111.html](https://www.longshidata.com/blog/c/c2025103111.html)
+
+现有问题
+
++ LLM 在处理长周期、多轮任务时面临着根本性的可扩展性瓶颈。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20Scaling%20LLM%20Multi-turn%20RL%20with%20End-to-end%20Summarization-based%20Context%20Management.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[论文笔记] Scaling LLM Multi-turn RL with End-to-end Summarization-based Context Management</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[论文笔记] Scaling LLM Multi-turn RL with End-to-end Summarization-based Context Management</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/11" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><a href="https://www.arxiv.org/abs/2510.06727" rel="nofollow">https://www.arxiv.org/abs/2510.06727</a></p>
+<blockquote>
+<p>参考：<a href="https://www.longshidata.com/blog/c/c2025103111.html" rel="nofollow">https://www.longshidata.com/blog/c/c2025103111.html</a></p>
+</blockquote>
+<p>现有问题</p>
+<ul>
+<li>LLM 在处理长周期、多轮任务时面临着根本性的可扩展性瓶颈。</li>
+<li>使用 RL 训练 LLM 智能体进行涉及外部工具的扩展交互时，对话历史、工具观察和推理轨迹的积累会迅速填满模型的上下文窗口。</li>
+</ul>
+<p>解决方案</p>
+<ul>
+<li>SUPO算法：周期性地将工具使用历史压缩成由LLM生成的简洁、任务相关的摘要，然后将工作上下文重置为初始提示加上这个任务相关的摘要。</li>
+<li>SUPO 算法是 <strong>model-free</strong> 的 <strong>policy</strong> 方法，在 <strong>online</strong> RL 设定下，使用 <strong>终局</strong> 奖励，通过 <strong>token-level</strong> 优化，主要解决 <strong>LLM多轮RL训练中上下文长度迅速成为瓶颈，导致指令遵循能力下降、rollout成本过高以及严格的上下文限制</strong>。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f883fb3e62272a486725ed3209c4da8b506e311d1ff4d949fb119775f3676b29/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363436303037303039382d63313338363933622d333361622d346131642d626536632d6265313832643764663239302e706e67"><img src="https://camo.githubusercontent.com/f883fb3e62272a486725ed3209c4da8b506e311d1ff4d949fb119775f3676b29/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363436303037303039382d63313338363933622d333361622d346131642d626536632d6265313832643764663239302e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766460070098-c138693b-33ab-4a1d-be6c-be182d7df290.png" style="max-width: 100%;"></a></p>
+<h2>End-to-end RL Training of Agent with Summarization (代理与 summarization 的端到端RL训练)</h2>
+<h3>“基于摘要的上下文管理”策略</h3>
+<p>问题：LLMs在处理多轮交互或复杂任务时，其理解和生成能力会受到自身固定上下文窗口大小的限制。当交互历史累积过多时，LLM可能“忘记”早期信息，导致推理错误，同时处理长文本也会显著增加计算成本。</p>
+<p>根本目的：在不修改LLM底层架构的情况下，让它能有效处理比其原生上下文窗口更长的任务。</p>
+<p>关键机制：LLM自我学习生成“任务相关”的摘要。</p>
+<ul>
+<li>作者认为总结本身也是LLM可以学习到的一种行为，因此可以在强化学习训练过程中，让LLM不仅学习如何使用工具完成任务，还同时学习如何生成高质量的摘要。</li>
+<li>高质量的摘要意味着它能够识别任务相关信息（哪些历史细节对于后续步骤至关重要？）、抽象和概括（如何用最简洁的语言表达这些关键信息？）、丢弃不相关信息（哪些细节现在已经不重要了，可以安全地移除？）</li>
+<li>这种“学习到的总结”使得摘要能够动态适应具体任务的需求，而不仅仅是简单地截断上下文，也不是使用预设规则进行总结。</li>
+</ul>
+<h3>SUPO算法</h3>
+<p>SUPO（Summarization augmented Policy Optimization，摘要增强策略优化）算法旨在解决LLM在执行长周期、多轮任务时面临的上下文长度限制问题，尤其是在通过RL进行微调时。</p>
+<p>核心思想： 让LLM智能体学会自主地、端到端地管理其上下文，通过生成任务相关的历史摘要来突破固定的上下文窗口限制。它将摘要生成本身视为RL策略的一部分进行优化，确保智能体不仅学会如何执行任务，还学会如何高效地记住和遗忘信息。</p>
+<p>SUPO是GRPO风格的策略梯度算法。奖励是稀疏的二元奖励（成功为1，失败为0）。</p>
+<p>目标：</p>
+<ul>
+<li>使LLM智能体能够处理远超其固定上下文窗口长度的长周期任务。</li>
+<li>在保证甚至提升任务成功率的同时，有效控制或降低实际工作上下文长度。</li>
+<li>通过端到端训练，联合优化工具使用行为和上下文摘要策略。</li>
+</ul>
+<h4>摘要增强型MDP（修改状态转换）</h4>
+<p>SUPO将标准MDP扩展为摘要增强型MDP（Summarization-augmented MDP）。</p>
+<p>在LLM智能体的标准MDP中，任何步骤的状态通常是所有先前提示、行动和观察的拼接。随着智能体行动，状态单调增长。然而，在摘要增强的MDP中，状态转换被修改：智能体仍然将其行动和观察附加到当前状态，但如果生成的上下文长度超过预定义阈值，则会触发摘要步骤。模型被提示生成摘要，下一个状态变为仅包含初始提示和新摘要的压缩表征。这样，就可以把一个超长轨迹拆分为数个短轨迹。</p>
+<p>状态转换由以下规则定义：</p>
+<ol>
+<li>若上下文未超限 ($|(s_t, a_t, o_t)| &amp;lt; L$) 且未收到总结指令 ($v_{sum} \not\subseteq s_t$) 的情况，状态正常增长；</li>
+<li>若对应上下文超限 ($|(s_t, a_t, o_t)| \geq L$) 但未收到总结指令 ($ v_{sum} \not\subseteq s_t $) 的情况，状态将附加总结指令 $v_{sum}$，准备进行总结；</li>
+<li>若已收到总结指令 ($v_{sum} \subseteq s_t$) 的情况，此时 $a_t$ 是生成的摘要，下一个状态将被压缩为初始提示 $s_1$ 和摘要 $a_t$。</li>
+</ol>
+<p>于是一个长周期轨迹被分解为多个子轨迹，每个子轨迹以对过去的摘要（或初始提示）开始，以智能体为当前工作片段生成新摘要结束。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/cf0cb098b9eb309b5d494bc1c3fe7da9349bd12063f9489ebe76a7c7da00a02a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438313632303033392d38323436383461632d346438362d343639312d383563362d6635326530326630623731662e706e67"><img src="https://camo.githubusercontent.com/cf0cb098b9eb309b5d494bc1c3fe7da9349bd12063f9489ebe76a7c7da00a02a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438313632303033392d38323436383461632d346438362d343639312d383563362d6635326530326630623731662e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766481620039-824684ac-4d86-4691-85c6-f52e02f0b71f.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ddad92a81586ea51eb7251f85b374f437072dc845772304862763f7bc897de1d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438313935303537332d39333663633265652d376463642d343065322d396334332d6133366539313561623562362e706e67"><img src="https://camo.githubusercontent.com/ddad92a81586ea51eb7251f85b374f437072dc845772304862763f7bc897de1d/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438313935303537332d39333663633265652d376463642d343065322d396334332d6133366539313561623562362e706e67" alt="传统的多轮工具使用中，LLM在每一轮都会把提示、推理、工具调用和返回结果全部累积进上下文，轮次一多就会迅速撑满上下文窗口，触发长度限制问题。引入摘要机制后，模型在上下文达到阈值时先把已有交互压缩成一段摘要，然后丢弃完整历史，只保留初始提示加摘要继续执行，相当于用“阶段性记忆”来延长可处理的交互过程。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766481950573-936cc2ee-7dcd-40e2-9c43-a36e915ab5b6.png" style="max-width: 100%;"></a></p>
+<p>图1：</p>
+<ul>
+<li>上图（Vanilla Multi-turn Tool-use）代表传统的LLM多轮工具使用方法。在每次交互中，LLM会接收一个状态s（prompt），根据这个状态进行思考（Think）并做出动作a，即采取某个工具（Tool）。工具执行后会产生一个观察结果o。 这些所有的信息（prompt、LLM输出、工具观察和推理痕迹）会不断地被累积，形成下一个状态s。这个过程一直持续到LLM给出最终响应a_T或达到最大步数H。 这种方法的主要问题是上下文会随着轮次增加而迅速增长，最终达到LLM的固定上下文窗口限制，导致“上下文长度限制”问题。</li>
+<li>下图（With Summary）是论文的带有“摘要式上下文管理”的方法。在上下文长度达到预设的“摘要阈值”（L）后，LLM会被指示生成一个过去交互的摘要（v_sum）。一旦摘要生成，工作上下文就会被重置为初始提示（s_1）和这个新的摘要（a_t1）。这意味着模型不再需要携带完整的历史记录，从现在开始相当于处理一个新的“子轨迹”。</li>
+</ul>
+<h4>策略梯度表示</h4>
+<p>修改后的状态转换使得上下文能够周期性重置，因此需要对应地修改策略梯度表示。论文的定理 3.2 将一个长周期轨迹的策略梯度分解为多个摘要子轨迹梯度的求和。这使得SUPO能够利用现有的RL基础算法（如PPO、GRPO）进行训练，因为每个子轨迹可以被视为一个独立的、短期的MDP推出。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9c3ed5ac5f6f6e51f1023093855a13a55cc8abe6dc1b9ee0395d7b5b7d5a175a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438323132373138312d64343663303066642d633836342d343134382d626464312d3736336266363037306561342e706e67"><img src="https://camo.githubusercontent.com/9c3ed5ac5f6f6e51f1023093855a13a55cc8abe6dc1b9ee0395d7b5b7d5a175a/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438323132373138312d64343663303066642d633836342d343134382d626464312d3736336266363037306561342e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766482127181-d46c00fd-c864-4148-bdd1-763bf6070ea4.png" style="max-width: 100%;"></a></p>
+<p>单条子轨迹的策略梯度 = 该子轨迹下执行步骤（优化工具使用）的策略梯度+该子轨迹下总结步骤（优化当前轨迹总结）的策略梯度。</p>
+<h4>算法设计细节</h4>
+<ul>
+<li>
+<p><strong>过长轨迹掩码机制（Overlong Trajectory Masking）</strong>：用于处理那些在达到摘要阈值前就变得过长的轨迹，进一步稳定训练。</p>
+<ul>
+<li>核心思想： 将“过长轨迹”定义为那些在达到最大步数 $ H $ 或最大总结次数 $ S $ 之前，未能给出最终响应的“失败的”长轨迹。这些过长轨迹会在计算梯度时被mask掉，不参与损失函数的计算。</li>
+<li>原因：避免训练偏差。作者解释说：“如果没有掩码，目标可能会偏向于抑制那些表现出良好总结策略但未能在步数或轨迹限制内提供答案的长Rollouts。”</li>
+<li>消融实验见论文第5.2.2节。</li>
+</ul>
+</li>
+<li>
+<p><strong>上下文长度的精细控制</strong>：为防止非常长的观察将上下文远远推过摘要阈值，SUPO在生成摘要前丢弃最后的行动-观察对。这确保用于摘要的上下文长度保持在严格控制的范围内。</p>
+<ul>
+<li>实际情况：理论上（Proposition 3.1）最大工作上下文长度为 $L + 2L_A + L_O + |v_{sum}|$，其中 $L_O$ 是来自工具返回的最大token数。但在复杂任务中$L_O$ 可能会非常长，导致实际上下文长度 $L_t$ 远远超过总结阈值 $L$。</li>
+<li>处理方式：当检测到上下文长度 $L_t &amp;gt; L$ 并决定进行总结时，SUPO会丢弃最后一个(action, observation)。即，对于刚刚产生的 (action, observation)，系统不将此加入上下文并进行总结，反而舍弃，然后将总结指令 <code class="notranslate">v_sum</code> 加入，准备让模型对舍弃了最后一步的上下文进行总结。</li>
+</ul>
+</li>
+<li>
+<p>轨迹管理：将一个带有摘要的完整推出视为一系列的“子轨迹”，每个子轨迹都是独立的MDP推出，方便集成到现有RL基础设施。</p>
+</li>
+<li>
+<p>组相对优势估计（GAE）：SUPO使用GAE稳定优化并鼓励探索，而非简单地使用全局或单个子轨迹的均值。</p>
+</li>
+</ul>
+<h2>Experiments Results</h2>
+<p>环境任务</p>
+<ul>
+<li>CodeGym
+<ul>
+<li><a href="https://www.alphaxiv.org/abs/2509.17325" rel="nofollow">https://www.alphaxiv.org/abs/2509.17325</a></li>
+<li>CodeGym 将编程问题转化为交互式的多轮工具使用环境，强调多回合工具使用环境，LLM智能体必须调用抽象工具来通过单元测试。</li>
+<li>CodeGym 的任务通常平均要求模型调用 44.07 次工具。</li>
+<li>
+
+</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f05e31716447f6d96ad4e246f1675cb23a4d2e520598bdff995d67b83956add3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363534343732313631352d64623263623730622d363236312d343835392d623566612d3237376662356166386136632e706e67"><img src="https://camo.githubusercontent.com/f05e31716447f6d96ad4e246f1675cb23a4d2e520598bdff995d67b83956add3/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363534343732313631352d64623263623730622d363236312d343835392d623566612d3237376662356166386136632e706e67" alt="一个任务平均会使用 6.52 种不同的工具；解决一个任务平均需要执行 44.07 个工具调用（steps）。" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766544721615-db2cb70b-6261-4859-b5fa-277fb5af8a6c.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>BrowseComp-Plus
+<ul>
+<li><a href="https://www.alphaxiv.org/abs/2508.06600" rel="nofollow">https://www.alphaxiv.org/abs/2508.06600</a></li>
+<li>BrowseComp-Plus 提供固定的、人工筛选的文档语料库，让智能体使用提供的搜索工具来回答复杂问题，并评估其答案准确性、搜索调用次数和引用质量。</li>
+<li>这些查询需要迭代搜索规划和对搜索结果的推理，并且需要复杂的、多轮查询交互。专有模型（如gpt）的搜索调用次数平均超过20次。</li>
+</ul>
+</li>
+</ul>
+<p>评估指标</p>
+<ul>
+<li>总结率（Summarization Rate）：衡量Rollouts中有多少比例触发了总结。</li>
+<li>条件成功率（Conditional Success Rate）：衡量在触发总结的Rollouts中，有多少比例最终成功。</li>
+</ul>
+<h3>对比实验：SUPO的有效性</h3>
+<p>指标</p>
+<ul>
+<li>Working len. ↓：一个时间步内，模型实际加载到内存中的上下文的最大长度。</li>
+<li>Effective len. ↑：模型在整个长程任务中能够“有效地”利用和记住的信息总量。在SUPO中通过【工作上下文长度 * (最大总结次数 + 1)】来近似衡量。</li>
+</ul>
+<p>实验结果：证明了SUPO的有效性。</p>
+<ul>
+<li>CodeGym：SUPO能够实现比使用32K上下文的基线更高的成功率，而SUPO本身仅使用4K工作上下文。</li>
+<li>BrowseComp-Plus：SUPO实现了 53.0% 的最终成功率。</li>
+</ul>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/07fee7ed6e68e3bf60cf6651fd9381aea6e65291b70970de9c5f383033452131/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438353038333831302d66316231326330322d353535322d346664612d623763642d6364383930313139633737372e706e67"><img src="https://camo.githubusercontent.com/07fee7ed6e68e3bf60cf6651fd9381aea6e65291b70970de9c5f383033452131/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438353038333831302d66316231326330322d353535322d346664612d623763642d6364383930313139633737372e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766485083810-f1b12c02-5552-4fda-b7cd-cd890119c777.png" style="max-width: 100%;"></a></p>
+<h3>消融实验：过长轨迹的掩码机制</h3>
+<p>实验设计：SUPO with overlong mask（包含过长轨迹mask机制的标准SUPO）和 SUPO  w/o overlong mask（移除了过长轨迹mask机制的SUPO版本）在CodeGym和BrowseComp-Plus实验对比。</p>
+<p>实验结果和发现：过长轨迹的掩码机制是必要的。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/79ef49be8ad9a322e54611ff953de290838ef9c265195cbebd772c05814971ea/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438343839303238392d30656631636333332d613466662d343332382d383036352d6532353631366362303835352e706e67"><img src="https://camo.githubusercontent.com/79ef49be8ad9a322e54611ff953de290838ef9c265195cbebd772c05814971ea/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438343839303238392d30656631636333332d613466662d343332382d383036352d6532353631366362303835352e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766484890289-0ef1cc33-a4ff-4328-8065-e25616cb0855.png" style="max-width: 100%;"></a></p>
+<ul>
+<li>
+<p>对于两个任务，没有过长mask机制的SUPO显示出了所谓“总结模式的崩溃”：</p>
+<ul>
+<li>总结率显著下降：更多的Rollouts倾向于在一个单一轨迹中完成，这与通过总结来扩展有效上下文的初衷背道而驰。模型不再倾向于利用总结机制。</li>
+<li>条件成功率骤降至0：这表明在没有掩码的情况下，即使有Rollouts触发了总结，它们也无法有效地引导模型走向成功，总结变得无效。</li>
+</ul>
+</li>
+</ul>
+<h3>情况分析：工具调用</h3>
+<p>在BrowseComp-Plus中对SUPO、GRPO以及不采用超长掩码的SUPO实验。</p>
+<ul>
+<li>平均而言，与GRPO相比，SUPO在训练期间允许并激励的工具调用次数最多可达3倍。对于BrowseComp-Plus而言，能够利用工具搜索更多相关资讯对于提升模型性能至关重要。</li>
+<li>尽管也对GRPO应用了超长掩码，以屏蔽那些在64K上下文长度内未能给出最终响应的轨迹，但GRPO的平均工具调用次数仍在下降。</li>
+<li>不采用超长掩码的SUPO，其平均工具调用次数相较于采用超长掩码的SUPO出现了快速下降。</li>
+</ul>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6037d4c4aac3f5c236456c60b9de079b202e3922914f865ebbe41f9ccc5f6f19/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438363230313231312d63353134326562312d633332342d343437352d383335382d6265666231353439356366352e706e67"><img src="https://camo.githubusercontent.com/6037d4c4aac3f5c236456c60b9de079b202e3922914f865ebbe41f9ccc5f6f19/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438363230313231312d63353134326562312d633332342d343437352d383335382d6265666231353439356366352e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766486201211-c5142eb1-c324-4475-8358-befb15495cf5.png" style="max-width: 100%;"></a></p>
+<h3>情况分析：在测试时扩展到处理更多轮摘要</h3>
+<p>能否将由SUPO训练、具有最大摘要数量S的模型直接扩展到一个最大摘要数量S'&gt;S的智能体？如果智能体学会了一种真正可泛化的摘要策略，那么它应该能够重复应用该策略来解决需要更长历史的更复杂问题。因此，作者还在BrowseComp-Plus上以最多次摘要训练的模型，在测试时以允许增加的摘要轮数进行评估。</p>
+<p>实验结果：使用SUPO训练的模型的准确率不仅超过了所有基线，而且随着测试时允许的摘要轮数增加而持续增长。</p>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5bff78235d9095108117c284476f3490a63807c625afcca629083d9667126297/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438363635343330312d32393265316539352d306438622d346130382d383835342d6537323631656238663663392e706e67"><img src="https://camo.githubusercontent.com/5bff78235d9095108117c284476f3490a63807c625afcca629083d9667126297/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032352f706e672f33393033393638382f313736363438363635343330312d32393265316539352d306438622d346130382d383835342d6537323631656238663663392e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2025/png/39039688/1766486654301-292e1e95-0d8b-4a08-8854-e7261eb8f6c9.png" style="max-width: 100%;"></a></p>
+<p>这表明SUPO所做的不仅仅是管理内存限制；它赋予了智能体一种稳健、可扩展的推理能力。通过学习将其经验提炼成有效的摘要，智能体可以动态扩展其问题解决范围，应对远比其明确训练过的任务更复杂的挑战。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>

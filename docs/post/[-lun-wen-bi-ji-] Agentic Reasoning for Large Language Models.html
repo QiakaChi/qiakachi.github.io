@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <style>body[data-ui-pending] #content {opacity:0;transition:opacity 0.3s ease;}</style><script>document.documentElement.setAttribute('data-ui-pending','true');</script><link rel='stylesheet' href='assets/GmeekBaseTheme.css'><script src='assets/GmeekCustomizeCss.js' defer></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/lightbox.js'></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/98450248?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="[https://www.arxiv.org/abs/2601.12538](https://www.arxiv.org/abs/2601.12538)
+> 推理是推断、问题解决和决策的基础认知过程。">
+<meta property="og:title" content="[论文笔记] Agentic Reasoning for Large Language Models">
+<meta property="og:description" content="[https://www.arxiv.org/abs/2601.12538](https://www.arxiv.org/abs/2601.12538)
+> 推理是推断、问题解决和决策的基础认知过程。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://qiakachi.github.io/post/%5B-lun-wen-bi-ji-%5D%20Agentic%20Reasoning%20for%20Large%20Language%20Models.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/98450248?v=4">
+<title>[论文笔记] Agentic Reasoning for Large Language Models</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">[论文笔记] Agentic Reasoning for Large Language Models</h1>
+<div class="title-right">
+    <a href="https://qiakachi.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/QiakaChi/qiakachi.github.io/issues/13" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><a href="https://www.arxiv.org/abs/2601.12538" rel="nofollow">https://www.arxiv.org/abs/2601.12538</a></p>
+<blockquote>
+<p>推理是推断、问题解决和决策的基础认知过程。尽管LLMs在封闭世界环境中展现出强大的推理能力，但在开放式和动态环境中却面临挑战。智能体推理（Agentic reasoning）标志着一个范式转变，它将LLMs重构为通过持续交互进行规划、行动和学习的自主智能体。 在本综述中，我们沿着三个互补的维度来组织智能体推理。首先，我们通过三个层面来刻画环境动态：基础智能体推理，它在稳定环境中建立核心的单智能体能力，包括规划、工具使用和搜索；自进化智能体推理，它研究智能体如何通过反馈、记忆和适应来完善这些能力；以及集体多智能体推理，它将智能扩展到涉及协调、知识共享和共同目标的协作环境中。在这些层面之上，我们区分了上下文推理（in-context reasoning）和训练后推理（post-training reasoning）：上下文推理通过结构化编排扩展了测试时的交互，而训练后推理则通过强化学习和监督微调来优化行为。 我们进一步回顾了涵盖科学、机器人技术、医疗保健、自主研究和数学等领域，在实际应用和基准测试中的代表性智能体推理框架。本综述将智能体推理方法综合成一个连接思维与行动的统一路线图，并概述了开放性挑战和未来方向，包括个性化、长周期交互、世界建模、可扩展的多智能体训练以及实际部署中的治理问题。</p>
+</blockquote>
+<h1>基础层</h1>
+<h2>规划</h2>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/40260dfb73027dfa29fa0b42d34635e987862308f39d9568cb3ba92acd522d51/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343234373333372d63363663323639312d383934342d343862652d613135352d6265313639396633363538632e706e67"><img src="https://camo.githubusercontent.com/40260dfb73027dfa29fa0b42d34635e987862308f39d9568cb3ba92acd522d51/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343234373333372d63363663323639312d383934342d343862652d613135352d6265313639396633363538632e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2026/png/39039688/1769434247337-c66c2691-8944-48be-a155-be1699f3658c.png" style="max-width: 100%;"></a></p>
+<p>LLMs如何通过规划来分解问题、安排决策并预测复杂环境。</p>
+<p>分为情境内规划（In-context Planning）和后训练规划（Post-training Planning）。</p>
+<p><strong>情境内规划</strong>：在推理时设计和实施规划策略，而无需额外的模型训练。</p>
+<ul>
+<li><strong>工作流设计（Workflow Design）</strong>：规划过程分为不同的阶段（如感知、推理、执行和验证）。如将任务分解为子任务，plan-act，task list的prompt。</li>
+<li><strong>树搜索/算法模拟（Tree Search / Algorithm Simulation）</strong>：BFS、DFS、A*、MCTS和束搜索等树搜索算法来推理过程。</li>
+<li><strong>过程形式化（Process Formalization）</strong>：通过符号表示、编程语言或逻辑框架来形式化规划，以确保组合性、可解释性和泛化能力。例如将计划编码为代码类工件或PDDL程序。</li>
+<li><strong>解耦/分解（Decoupling / Decomposition）</strong>：将复杂的规划模块化为可分离的组件，例如目标识别、记忆检索和计划细化。ReWOO就是一个例子，它明确地将观察和推理模块分离以优化效率。</li>
+<li><strong>外部辅助/工具使用（External Aid / Tool Use）</strong>：利用RAG、知识图谱、外部结构或世界模型和通用工具使用等来辅助规划。</li>
+</ul>
+<p><strong>后训练规划</strong>：通过优化方法来提升规划能力。</p>
+<ul>
+<li><strong>奖励设计/最优控制（Reward Design / Optimal Control）</strong>：这种方法通过设计合适的奖励结构和使用强化学习或控制理论工具来解决最优行为问题。例如，Reflexion和Reflect-then-Plan等方法结合了基于效用的学习来指导规划行为，而其他工作则强调奖励塑形或明确处理最优控制问题。</li>
+</ul>
+<h2>工具</h2>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/cb26ef99ef74351325198548f2edbfb5fb43af5e3d13d2790586956cfbcbd9e2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343334373034362d63653165323237392d393463662d343736372d626165662d3262353436376165623931642e706e67"><img src="https://camo.githubusercontent.com/cb26ef99ef74351325198548f2edbfb5fb43af5e3d13d2790586956cfbcbd9e2/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343334373034362d63653165323237392d393463662d343736372d626165662d3262353436376165623931642e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2026/png/39039688/1769434347046-ce1e2279-94cf-4767-baef-2b5467aeb91d.png" style="max-width: 100%;"></a></p>
+<p>如何通过调用外部模块来增强其内在能力。</p>
+<p>核心挑战在于智能体何时使用工具、选择哪个工具以及如何生成有效的调用。</p>
+<p>分为三种主要类型：情境内工具集成、后训练工具集成和基于编排的工具集成。</p>
+<p><strong>情境内工具集成</strong>：无需训练，重点是设计在推理时的指令、示例和上下文信息，以引导LLM。</p>
+<ul>
+<li><strong>推理与工具使用的交错（Interleaving Reasoning and Tool Use）</strong>：情境内智能体推理的基础在于通过采取action来增强CoT过程。如ReAct是reasoning+act，reasoning作用于行动计划，act作用于外部环境并从中收集信息。</li>
+<li><strong>优化工具交互的上下文（Optimizing Context for Tool Interaction）</strong>：当智能体必须处理大量或复杂的工具集时，其性能会下降，需要优化这些上下文信息来解决这个问题。例如压缩上下文，截取长轨迹，明确的工具文档（使LLM能够以零样本方式使用新工具）。</li>
+</ul>
+<p><strong>后训练工具集成</strong>：作用于LLMs或大型检索模型（LRMs），学习如何与外部工具交互，将复杂任务分解为基于工具的推理步骤。</p>
+<ul>
+<li><strong>通过SFT引导工具使用（Bootstrapping of Tool Use via SFT）</strong>：早期使用SFT训练。</li>
+<li><strong>通过RL掌握工具使用（Mastery of Tool Use via RL）</strong>：最新研究利用RL。</li>
+</ul>
+<p><strong>基于编排的工具集成</strong>：实际应用中需要多个工具之间的编排来完成复杂任务，通常涉及规划、排序和管理工具间的依赖关系。</p>
+<ul>
+<li><strong>用于工具编排的智能体管道（Agentic Pipelines for Tool Orchestration）</strong>：大多数当前Agent先plan后act，首先生成工具使用的结构化计划，然后执行它。如HuggingGPT 。</li>
+<li><strong>用于编排的工具表示（Tool Representations for Orchestration）</strong>：侧重于优化工具本身，以促进在编排过程中更准确的选择、组合和协调。</li>
+</ul>
+<h2>搜索</h2>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/13fff7729c06dc85a67d19f164984409eeee93b8be73f5e8f1984b8ab0b661cd/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343338333539372d61656433333935312d386663392d346534332d386135312d6164373335653137623761312e706e67"><img src="https://camo.githubusercontent.com/13fff7729c06dc85a67d19f164984409eeee93b8be73f5e8f1984b8ab0b661cd/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343338333539372d61656433333935312d386663392d346534332d386135312d6164373335653137623761312e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2026/png/39039688/1769434383597-aed33951-8fc9-4e43-8a51-ad735e17b7a1.png" style="max-width: 100%;"></a></p>
+<p>单智能体RAG系统分为三种不同的架构风格：情境内搜索、后训练搜索和结构增强智能体RAG 。</p>
+<p><strong>情境内搜索（In-Context Search）</strong>：</p>
+<ul>
+<li><strong>推理与搜索的交错（Interleaving Reasoning and Search）</strong>：通过精心设计的提示策略，将检索行为直接嵌入到语言模型的推理过程中，通过少量示例或特殊标记指导模型在单个前向传递中交替进行推理和搜索。如ReAct将思维链推理与工具使用命令（如<code class="notranslate">&lt;Search&gt;</code>）交错，以动态调用外部API或知识源。</li>
+<li><strong>结构增强搜索（Structure-Enhanced Search）</strong>：使单个智能体能够通过动态查询、工具调用和反射式自我监控来推理符号知识源（如知识图谱）。这些智能体决定何时访问结构化知识、如何制定基于图的查询以及检索到的信息是否足以继续推理轨迹。如Agent-G将非结构化文档检索与结构化图推理相结合，使用反馈循环和专门的检索模块来确保准确的多跳响应。</li>
+</ul>
+<p><strong>后训练搜索（Post-training Search）</strong>：</p>
+<ul>
+<li><strong>SFT驱动的智能体搜索（SFT-Driven Agentic Search）</strong></li>
+<li><strong>基于RL的智能体搜索（RL-Based Agentic Search）</strong></li>
+</ul>
+<h1>自进化智能体推理</h1>
+<h2>反馈机制</h2>
+<p>分为三种不同的反馈模式：反思性反馈、参数适应和验证器驱动反馈。</p>
+<p><strong>反思性反馈（Reflective Feedback）</strong>：通过自我批判或验证来修正其推理过程，而无需更新模型的参数。它暴露中间推理输出（如CoT或部分解决方案），并引入额外的评估步骤，直接影响模型如何继续生成。</p>
+<p><strong>参数适应（Parametric Adaptation）</strong>：通过额外的训练将反馈整合到模型的参数，更新模型的权重。如对中间推理轨迹进行SFT或RL。</p>
+<p><strong>验证器驱动反馈（Validator-Driven Feedback）</strong>：利用外部的成功或失败信号来改进模型输出，而无需修改模型的推理过程或参数。用一个验证器（如单元测试、约束检查器或模拟器）评估候选输出，并判断它们是否满足预定义的正确性标准。</p>
+<h2>记忆</h2>
+<p>记忆不再仅仅是延长上下文窗口或存储历史输入，而是被视为推理循环的一个不可或缺的组成部分，用于反思过去的经验、指导未来的行动以及动态适应复杂、长期的任务。</p>
+<p>分为四种记忆方式：平面记忆的智能体使用、结构化记忆表示和训练后记忆控制。</p>
+<p><strong>平面记忆的智能体使用（Agentic Use of Flat Memory）</strong>：</p>
+<ul>
+<li><strong>事实记忆（Factual Memory）</strong>：传统的记忆系统主要将记忆用于存储对话历史或近期观察结果，以解决Transformer模型有限的上下文窗口问题。新兴的智能体记忆将其视为推理循环的一部分，支持反思和决策。</li>
+<li><strong>经验记忆（Experience Memory）</strong>：工作流记忆会跟踪程序轨迹，以实现计划恢复和一致性推理。动态作弊表（Dynamic Cheatsheet, DC）则为黑盒模型配备外部记忆，以存储可重用策略，减少冗余推理。</li>
+</ul>
+<p><strong>结构化记忆表示（Structured Memory Representations）</strong>：</p>
+<ul>
+<li>如<strong>语义图、工作流和分层树</strong>，通常扩展到多模态设置，以更好地捕捉依赖关系和上下文关系。如GraphRAG通过图结构化RAG。</li>
+</ul>
+<p><strong>训练后记忆控制（Post-training Memory Control）</strong>：</p>
+<ul>
+<li>记忆系统也可以由智能体的推理过程本身控制，即智能体明确决定存储什么、何时检索以及如何与记忆交互。</li>
+</ul>
+<h2>进化的基础智能体能力</h2>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c841663af94b130bca41aa6db0d6922a9fae1938e2f28735e1a15b1079a988e9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343436383134302d65623930373530392d383631662d343963352d613336302d3933323664373136313066622e706e67"><img src="https://camo.githubusercontent.com/c841663af94b130bca41aa6db0d6922a9fae1938e2f28735e1a15b1079a988e9/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343436383134302d65623930373530392d383631662d343963352d613336302d3933323664373136313066622e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2026/png/39039688/1769434468140-eb907509-861f-49c5-a360-9326d71610fb.png" style="max-width: 100%;"></a></p>
+<p>agent的核心能力（规划、工具使用和搜索）可通过自进化机制得到持续提升。</p>
+<ul>
+<li><strong>规划（Self-evolving Planning）</strong>：
+<ul>
+<li>通过经验和反馈机制，自主地生成任务、完善策略并与环境进行迭代互动。</li>
+<li>主要方向包括<strong>自生成任务构建</strong>，如SCA框架允许智能体交替生成和解决问题，并将成功的轨迹用于微调。<strong>自奖励框架</strong>使智能体能够评估自己的输出，产生高质量的训练信号。此外，智能体还可以通过<strong>环境塑造</strong>（如AgentGen构建自适应环境）或<strong>在线适应</strong>（如Reflexion和AdaPlanner）来进化，将自然语言的批判或轨迹转化为训练奖励，实现持续的策略完善。</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><strong>自进化工具使用（Self-evolving Tool-use）</strong>：
+<ul>
+<li>强调智能体能够<strong>自主创建和合成新工具</strong>。这不再仅仅是通过训练，而是通过提示一个冻结的大型语言模型，使其在遇到现有工具集无法解决的问题时，充当程序员的角色。</li>
+<li>如LATM框架使用一个强大的模型作为“工具制造者”来创建工具，而一个更轻量级的模型作为“工具使用者”来频繁调用这些工具。CRAFT和CREATOR等框架则生成针对特定领域的定制工具。ToolMaker甚至可以将整个公共代码仓库转化为可用的工具，使智能体能够即时利用人类编写的复杂代码库。</li>
+</ul>
+</li>
+<li><strong>自进化搜索（Self-evolving Search）</strong>：
+<ul>
+<li>将搜索从静态工具转变为推理循环中不断适应的组成部分。 早期系统中搜索通常是静态的，依赖固定的检索启发式或基于相似性的检索器。而现在研究越来越将搜索和记忆联系在一个<strong>共同进化的循环</strong>中：智能体在任务执行期间持续更新其记忆库，同时动态调整搜索方式。</li>
+<li><strong>进化的记忆库（Evolving Memory Bases）</strong>：智能体通过反思和执行后更新主动完善其记忆库。例如，Reflexion允许智能体批判自己的推理轨迹并存储提炼出的见解，从而提高未来的搜索相关性。</li>
+<li><strong>动态搜索和合成（Dynamic Search and Synthesis）</strong>：搜索策略本身也可以通过动态优先级和合成来进化。结构化记忆表示（如工作流和知识图）提供语义支架，实现多跳和组合搜索。MemOS和Memory-as-Action等系统更是将搜索决策直接整合到推理策略中，使检索目标、策略和来源能够随智能体经验的积累而共同适应。</li>
+</ul>
+</li>
+</ol>
+<h1>多代理协作推理</h1>
+
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/477205696938c62a350629fa7d41f006e6ec3784840af43ede153e32c0a6f0f7/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343538343338372d37633037363965362d313966392d343964322d383535652d6661326431636436636463362e706e67"><img src="https://camo.githubusercontent.com/477205696938c62a350629fa7d41f006e6ec3784840af43ede153e32c0a6f0f7/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032362f706e672f33393033393638382f313736393433343538343338372d37633037363965362d313966392d343964322d383535652d6661326431636436636463362e706e67" alt="" data-canonical-src="https://cdn.nlark.com/yuque/0/2026/png/39039688/1769434584387-7c0769e6-19f9-49d2-855e-fa2d1cd6cdc6.png" style="max-width: 100%;"></a></p>
+<h2>多智能体系统的角色分类</h2>
+<p>可分为通用角色和特定领域的角色。</p>
+<p><strong>通用角色（Generic Roles）</strong>：</p>
+<ul>
+<li><strong>领导者/协调者（Leader/Coordinator）</strong>：
+<ul>
+<li>设定全局目标、将任务分解为可管理的子目标、分配任务给智能体。</li>
+<li>仲裁在具有重叠或矛盾输出的智能体之间出现的冲突。</li>
+</ul>
+</li>
+<li><strong>工作者/执行者（Worker/Executor）</strong>：
+<ul>
+<li>从事具体的行动，如调用外部工具、编写或执行代码、检索文档或与环境交互。</li>
+</ul>
+</li>
+<li><strong>批评者/评估者（Critic/Evaluator）</strong>：
+<ul>
+<li>验证正确性、测试假设、进行红队响应以及发现潜在风险。</li>
+<li>在基于大型语言模型的系统中，通常对应于LLM-as-a-judge。</li>
+</ul>
+</li>
+<li><strong>记忆维护者（Memory Keeper）</strong>：
+<ul>
+<li>将记忆管理抽象为专门的角色。</li>
+<li>整理和维护长期知识结构，如情景日志、语义嵌入、检索索引或知识图谱。</li>
+</ul>
+</li>
+<li><strong>沟通协调者（Communication Facilitator）</strong>：
+<ul>
+<li>沟通开销很容易损害多智能体系统的效率。</li>
+<li>负责管理智能体间的交换协议，如定义消息模式、管理通信带宽、强制执行门控机制及协调共识建立。</li>
+</ul>
+</li>
+</ul>
+<p><strong>领域特定角色（Domain-Specific Roles）</strong>：特定领域的任务通常需要专门的功能。</p>
+<ul>
+<li><strong>软件工程（Software Engineering）</strong>：多智能体系统通常映射到与软件开发生命周期相对应的角色：架构师、开发人员、代码评审员/测试人员、持续集成（CI）协调者和发布经理。</li>
+<li><strong>金融（Finance）</strong></li>
+<li><strong>法律活动（Legal Activities）</strong>
+<ul>
+<li><strong>法定推理（Statutory reasoning）</strong></li>
+<li><strong>模拟法庭动态（Simulate courtroom dynamics）</strong></li>
+</ul>
+</li>
+<li><strong>医疗保健（Healthcare）</strong>：
+<ul>
+<li><strong>临床诊断和咨询（Clinical diagnostics and consultation）</strong></li>
+<li><strong>自主研究（Autonomous research）</strong></li>
+<li><strong>公共卫生事件（Public health events）</strong></li>
+</ul>
+</li>
+</ul>
+<h2>协作与分工</h2>
+<p>分为两个维度：上下文协作、训练后协作和智能体路由。</p>
+<ul>
+<li><strong>上下文协作（In-context collaboration）</strong>：侧重于在推理时指定或诱导的协调策略，无需额外的训练。</li>
+<li><strong>训练后协作（Post-training collaboration）</strong>：通过学习或搜索来优化智能体角色、交互结构或路由策略。</li>
+</ul>
+<p>此外，智能体路由可以被视为分工的一种特殊情况，其中路由决策根据任务需求明确地将认知和计算卸载到不同的智能体。</p>
+<p><strong>上下文协作（In-context Collaboration）</strong>：侧重于在推理时指定或诱导的协调策略，无需额外的训练。</p>
+<ul>
+<li><strong>手动设计的管道（Manually Crafted Pipelines）</strong>：依赖于预定义的层级结构或固定的协作工作流，在执行前确定智能体角色、执行顺序和通信规则。
+<ul>
+<li>如 AgentOrchestra、MetaGPT 和 SurgRAW 有一个中央规划器或协调者通过结构化的子目标指导下属智能体。</li>
+<li>级联管道（如 Collab-RAG、MA-RAG、Chain of Agents 和 AutoAgents）则顺序处理信息，将中间输出传递给下游，但修订有限。</li>
+<li>模块化角色分解框架（如 RAG-KG-IL、SMoA 和 MDocAgent）定义了固定的功能角色。</li>
+</ul>
+</li>
+<li><strong>大型语言模型驱动的管道（LLM-Driven Pipelines）</strong>：利用LLM作为协调器将高级目标分解为子目标，将其路由到专业化的智能体或工具。如 AutoML-Agent，Magentic-One，MAS-GPT。</li>
+<li><strong>智能体路由（Agent Routing）</strong>：与LLM驱动的编排密切相关，它明确将智能体路由建模为一个决策层，为每个查询或子任务选择合适的专家。 如AgentRouter,Talk to Right Specialists 。</li>
+</ul>
+<p><strong>训练后协作（Post-training Collaboration）</strong>：通过学习或搜索过程优化智能体的角色、交互结构或路由策略。</p>
+<h2>多智能体进化</h2>
+<p>通过强化学习、自博弈、课程演化和验证器驱动的反馈等方式。</p>
+<p>分为：从单智能体演化到多智能体演化、多智能体记忆管理与演化和训练多智能体以演化。</p>
+<p><strong>从单智能体演化到多智能体演化</strong>：</p>
+<ul>
+<li><strong>幕内演化（Intra-test-time evolution）</strong>：在任务执行期间适应和改进的能力。如自然语言自我批评、运行时自适应规划和记忆重写等方法，不进行外部监督。</li>
+<li><strong>幕间演化（Inter-test-time evolution）</strong>：将自我改进过程扩展到跨任务学习，其中在一个任务中进行的适应可以被巩固并转移到未来的任务中。包括离线自我蒸馏、在线强化学习框架和课程机制等方法。</li>
+</ul>
+<p><strong>多智能体记忆管理与演化</strong>：</p>
+<ul>
+<li><strong>架构</strong>：Memory用三层图层次结构区分高级通用洞察和细粒度执行轨迹，Intrinsic Memory Agents为每个智能体维护专用的与角色对齐的记忆模板。</li>
+<li><strong>存储拓扑与记忆治理</strong>：介绍了集中式、分布式和混合式存储。</li>
+<li><strong>记忆内容</strong>：语义、任务和认知阶段分解等</li>
+<li><strong>记忆管理策略</strong>：基于遗忘的方法（例如“总结与遗忘”）、结构化管理（将过程跟踪组织成结构化三元组）以及学习型方法（通过强化或模仿学习优化记忆使用）等。</li>
+</ul>
+<p><strong>训练多智能体以演化</strong>：</p>
+<ul>
+<li><strong>通过交互和内在反馈进行协同演化</strong>：通过明确的训练目标实现多智能体演化。</li>
+<li><strong>用于集体适应的多智能体强化微调</strong>：基于LLM的多智能体系统量身定制的强化微调框架。</li>
+<li><strong>角色专业化和联合信用分配</strong>：结构化角色专业化和联合信用分配的方法。</li>
+<li><strong>偏好驱动和对齐驱动的多智能体演化</strong>：将人类反馈或强化学习与人类意图对齐。</li>
+</ul>
+<h1>未来挑战</h1>
+<p><strong>用户中心化智能体推理和个性化 (User-centric Agentic Reasoning and Personalization)</strong></p>
+<p><strong>长期智能体推理和扩展交互 (Long-horizon Agentic Reasoning from Extended Interaction)</strong>：目前的模型在长任务中错误会迅速累积，需要更细粒度的信用信号和跨多个情节和任务的泛化学习方法。</p>
+<p><strong>世界模型下的智能体推理 (Agentic Reasoning with World Models)</strong>：世界模型的设计依赖于临时表示，并且通常在短期或特定环境数据上进行训练。</p>
+<p><strong>多智能体协作推理与训练 (Multi-agent Collaborative Reasoning and Training)</strong>：扩展到更大规模的智能体群体会引入拓扑适应、协调开销和安全等挑战。</p>
+<p><strong>潜在智能体推理 (Latent Agentic Reasoning)</strong>：潜在智能体推理探索在内部潜在空间而不是显式的自然语言或符号跟踪中执行规划、决策和协作。虽然潜在推理可以提高效率和可扩展性，但代价是可解释性和可控性降低。</p>
+<p><strong>智能体推理的治理 (Governance of Agentic Reasoning)</strong></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://qiakachi.github.io">QiakaChi's Note</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","QiakaChi/qiakachi.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>
